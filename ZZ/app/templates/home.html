@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <style>
+    body {
+        background-image: url("{% static 'fondoHome.png' %}");
+        background-size: cover;      
+        background-repeat: no-repeat; 
+        background-attachment: fixed; 
+        background-position: center;  
+    }
+
+    /* Caja con borde para contenido de texto */
+    .text-box {
+        max-width: 1000px;
+        margin: 2rem auto;
+        background: rgba(255,255,255,0.85);
+        border: 2px solid rgba(0,0,0,0.12);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        backdrop-filter: blur(4px);
+    }
+    .section {
+    display: flex;           /* activa el modo flex */
+    justify-content: space-between; /* separa los elementos */
+    align-items: flex-start; /* alinea arriba */
+    gap: 20px;               /* espacio entre ellos */
+    width: 100%;
+    
+    box-sizing: border-box;
+    }
+
+    .box {
+    flex: 1;                 /* ambos ocupan el mismo ancho */
+    background: rgba(255,255,255,0.9);
+    padding: 1.5rem;
+    border-radius: 10px;
+    min-height: 400px;
+    max-height: 400px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+
+    .text-box h1 {
+      margin-top: 0;
+    }
+  </style>
+
+    <div class="text-box">
+        <h1>Bienvenidos a la Página Principal de Z&Z Dashboard</h1>
+    </div>
+    <div class="section">
+        <div class="box  ">
+            <h1>Que es Z&Z?</h1>
+            <p>Z&Z es una multitienda estadounidense dedicada a la venta de ropa, calzado y accesorios de moda para hombres, mujeres y jóvenes. Desde sus inicios, la marca se ha destacado por ofrecer productos modernos, accesibles y de alta calidad, inspirados en las últimas tendencias internacionales.
+
+                Con una amplia variedad de estilos —desde looks casuales y urbanos hasta prendas elegantes y sofisticadas—, Z&Z busca que cada cliente pueda expresar su personalidad a través de la moda. Además, la empresa combina lo mejor del diseño contemporáneo con materiales duraderos y un enfoque en la sostenibilidad, promoviendo un consumo más responsable.
+
+                Presente tanto en tiendas físicas como en su plataforma online, Z&Z se ha convertido en una opción favorita para quienes buscan mantenerse a la vanguardia sin sacrificar comodidad ni estilo.</p>
+        </div>
+        <div class="box  ">
+            <h1>Porque es este Dashboard?</h1>
+            <p>Este Dashboard de Z&Z ha sido diseñado para proporcionar una visión integral y en tiempo real del rendimiento de la tienda. A través de métricas clave y análisis detallados, los administradores pueden tomar decisiones informadas para optimizar las operaciones y mejorar la experiencia del cliente.
+
+                Con herramientas de visualización de datos y reportes personalizables, el Dashboard permite un seguimiento efectivo de las ventas, el inventario y el comportamiento del cliente. Esto no solo ayuda a identificar tendencias y oportunidades, sino que también facilita la implementación de estrategias basadas en datos.
+
+                En un mercado tan dinámico como el de la moda, contar con un Dashboard eficiente es crucial para mantenerse competitivo y responder rápidamente a las demandas del consumidor.</p>
+        </div>
+    </div>
+{% endblock %}
