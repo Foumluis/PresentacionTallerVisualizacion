@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Cantidad de Compras según Categoría y Talla de Artículo{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-box-seam me-2"></i>Cantidad de Compras según Categoría y Talla de Artículo</h2>
+            <p class="text-muted">Análisis multivariado de las compras considerando categoría y talla</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Heatmap: Categoría vs Talla</h5>
+                </div>
+                <div class="card-body">
+                    <div id="heatmapChart" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Distribución por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoriaChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Distribución por Talla</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="tallaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Insights Clave</h5>
+                </div>
+                <div class="card-body">
+                    <p>Análisis detallado de las combinaciones más populares de categoría y talla.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Heatmap using Plotly
+    const heatmapData = [{
+        z: [
+            [45, 60, 78, 82, 65, 45, 30],
+            [30, 50, 65, 70, 55, 38, 25],
+            [55, 70, 85, 90, 75, 52, 40],
+            [20, 35, 48, 52, 40, 28, 18],
+            [15, 25, 35, 38, 30, 22, 15]
+        ],
+        x: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+        y: ['Ropa', 'Calzado', 'Accesorios', 'Deportes', 'Otros'],
+        type: 'heatmap',
+        colorscale: 'Viridis',
+        showscale: true
+    }];
+
+    const heatmapLayout = {
+        title: 'Cantidad de Compras por Categoría y Talla',
+        xaxis: { title: 'Talla' },
+        yaxis: { title: 'Categoría' }
+    };
+
+    Plotly.newPlot('heatmapChart', heatmapData, heatmapLayout);
+
+    // Categoria Chart
+    const ctx1 = document.getElementById('categoriaChart').getContext('2d');
+    const categoriaChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: ['Ropa', 'Calzado', 'Accesorios', 'Deportes', 'Otros'],
+            datasets: [{
+                label: 'Cantidad de Compras',
+                data: [405, 333, 467, 241, 180],
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Talla Chart
+    const ctx2 = document.getElementById('tallaChart').getContext('2d');
+    const tallaChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+            datasets: [{
+                label: 'Cantidad de Compras',
+                data: [165, 240, 311, 332, 265, 185, 128],
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

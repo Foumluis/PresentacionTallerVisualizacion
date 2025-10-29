@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Problema 2: Ventas Precarias en Categorías{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Horizontal Navigation -->
+    <div class="horizontal-nav">
+        <ul class="nav nav-tabs" id="problemasTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{% url 'problema1' %}">
+                    <i class="bi bi-1-circle me-2"></i>Problema 1: Disparidad en Ventas por Género
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" href="{% url 'problema2' %}">
+                    <i class="bi bi-2-circle me-2"></i>Problema 2: Ventas Precarias en Categorías
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{% url 'problema3' %}">
+                    <i class="bi bi-3-circle me-2"></i>Problema 3: Presencia Geográfica Pobre en EEUU
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-2-circle-fill text-warning me-2"></i>Problema 2: Ventas Precarias en Categorías</h2>
+            <p class="text-muted">Análisis de categorías con rendimiento por debajo del esperado</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Rendimiento por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="problema2Chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Categorías Críticas</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Libros</span>
+                            <span class="badge bg-danger">-45%</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Deportes</span>
+                            <span class="badge bg-warning">-32%</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Juguetes</span>
+                            <span class="badge bg-warning">-28%</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Causas Identificadas</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Falta de variedad en el catálogo</li>
+                        <li>Precios no competitivos</li>
+                        <li>Marketing insuficiente</li>
+                        <li>Problemas de inventario</li>
+                        <li>Experiencia de usuario deficiente</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Plan de Acción</h5>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li>Realizar análisis de competencia</li>
+                        <li>Revisar estrategia de precios</li>
+                        <li>Ampliar catálogo de productos</li>
+                        <li>Implementar campañas promocionales</li>
+                        <li>Mejorar visibilidad en plataforma</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Objetivo de Mejora</h5>
+                </div>
+                <div class="card-body">
+                    <p>Meta: Incrementar las ventas en categorías críticas en un 40% en los próximos 6 meses.</p>
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 15%">15% Actual</div>
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 40%">40% Meta</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('problema2Chart').getContext('2d');
+    const problema2Chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Electrónicos', 'Ropa', 'Hogar', 'Deportes', 'Libros', 'Juguetes'],
+            datasets: [{
+                label: 'Ventas Actuales',
+                data: [95000, 88000, 75000, 42000, 28000, 35000],
+                backgroundColor: 'rgba(255, 159, 64, 0.8)',
+            }, {
+                label: 'Meta',
+                data: [95000, 88000, 75000, 62000, 51000, 49000],
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Ventas ($)'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Ventas Actuales vs Meta por Categoría'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

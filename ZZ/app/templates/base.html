@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Académico</title>
+    <title>{% block title %}Dashboard de Análisis{% endblock %}</title>
     <!-- Bootstrap CSS and Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plotly.js for interactive charts -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <!-- Custom CSS -->
     <style>
         :root {
-            --sidebar-width: 280px;
+            --sidebar-width: 300px;
+            --topbar-height: 60px;
         }
         
         body {
@@ -20,6 +23,35 @@
             background-color: #f8f9fa;
         }
 
+        /* Top Bar */
+        .top-bar {
+            height: var(--topbar-height);
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 30px;
+        }
+
+        .info-icon {
+            font-size: 24px;
+            color: #1e3c72;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .info-icon:hover {
+            color: #2a5298;
+            transform: scale(1.1);
+        }
+
+        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -30,7 +62,21 @@
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+            overflow-y: auto;
             transition: all 0.3s ease;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
         }
 
         .sidebar-header {
@@ -40,17 +86,68 @@
             margin-bottom: 20px;
         }
 
-        .nav-item {
-            margin: 8px 16px;
+        .nav-section {
+            margin-bottom: 10px;
         }
 
-        .nav-link {
+        .nav-section-header {
             padding: 12px 20px;
+            margin: 8px 16px;
             border-radius: 8px;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-section-header:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-section-header.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-section-title {
+            display: flex;
+            align-items: center;
             gap: 12px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .nav-section-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .nav-section-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .nav-subsection {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .nav-subsection.show {
+            max-height: 500px;
+        }
+
+        .nav-item {
+            margin: 4px 16px 4px 32px;
+        }
+
+        .nav-link {
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
         }
 
         .nav-link:hover {
@@ -59,15 +156,72 @@
         }
 
         .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.25);
+            font-weight: 500;
         }
 
+        .nav-link-special {
+            padding: 12px 20px;
+            margin: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: rgba(220, 53, 69, 0.2);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .nav-link-special:hover {
+            background-color: rgba(220, 53, 69, 0.3);
+            transform: translateX(5px);
+        }
+
+        .nav-link-special.active {
+            background-color: rgba(220, 53, 69, 0.4);
+        }
+
+        /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width);
+            margin-top: var(--topbar-height);
             padding: 30px;
             transition: all 0.3s ease;
         }
 
+        /* Horizontal Navbar for Problemas */
+        .horizontal-nav {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .horizontal-nav .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .horizontal-nav .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            padding: 12px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .horizontal-nav .nav-tabs .nav-link:hover {
+            color: #1e3c72;
+            border-bottom: 2px solid #1e3c72;
+        }
+
+        .horizontal-nav .nav-tabs .nav-link.active {
+            color: #1e3c72;
+            background-color: transparent;
+            border-bottom: 2px solid #1e3c72;
+        }
+
+        /* Cards */
         .card {
             border: none;
             border-radius: 15px;
@@ -92,12 +246,15 @@
             padding: 25px;
         }
 
-        @media (max-width: 500px) {
+        @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
             }
             .main-content {
                 margin-left: 0;
+            }
+            .top-bar {
+                left: 0;
             }
             .sidebar.show {
                 transform: translateX(0);
@@ -107,6 +264,13 @@
 </head>
 <body>
     <div class="container-fluid p-0">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <a href="{% url 'alcance' %}" title="Alcance del Proyecto">
+                <i class="bi bi-info-circle info-icon"></i>
+            </a>
+        </div>
+
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
@@ -114,38 +278,126 @@
                     <i class="bi bi-graph-up-arrow"></i>
                     Dashboard
                 </h3>
-                <p class="text-white-50 small mb-0">Análisis Académico</p>
+                <p class="text-white-50 small mb-0">Análisis de Ventas</p>
             </div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link text-white {% if request.path == '/total-alumnos/' %}active{% endif %}" 
-                       href="{% url 'total_alumnos' %}">
-                        <i class="bi bi-people-fill"></i>
-                        Total de Alumnos
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {% if request.path == '/total-secciones/' %}active{% endif %}" 
-                       href="{% url 'total_secciones' %}">
-                        <i class="bi bi-grid-3x3-gap-fill"></i>
-                        Total por Secciones
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {% if request.path == '/notas1/' %}active{% endif %}" 
-                       href="{% url 'notas1' %}">
-                        <i class="bi bi-card-checklist"></i>
-                        Notas 1 por Ramo
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {% if request.path == '/promedio-tvd/' %}active{% endif %}" 
-                       href="{% url 'promedio_tvd' %}">
+
+            <!-- Análisis Univariado -->
+            <div class="nav-section">
+                <div class="nav-section-header" onclick="toggleSection('univariado')">
+                    <div class="nav-section-title">
                         <i class="bi bi-bar-chart-fill"></i>
-                        Promedio TVD
-                    </a>
-                </li>
-            </ul>
+                        <span>Análisis Univariado</span>
+                    </div>
+                    <i class="bi bi-chevron-down text-white nav-section-icon" id="icon-univariado"></i>
+                </div>
+                <div class="nav-subsection" id="subsection-univariado">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if 'distribucion-genero' in request.path %}active{% endif %}" 
+                               href="{% url 'distribucion_genero' %}">
+                                <i class="bi bi-gender-ambiguous"></i>
+                                Distribución de Clientes por Género
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Análisis Bivariado -->
+            <div class="nav-section">
+                <div class="nav-section-header" onclick="toggleSection('bivariado')">
+                    <div class="nav-section-title">
+                        <i class="bi bi-diagram-3-fill"></i>
+                        <span>Análisis Bivariado</span>
+                    </div>
+                    <i class="bi bi-chevron-down text-white nav-section-icon" id="icon-bivariado"></i>
+                </div>
+                <div class="nav-subsection" id="subsection-bivariado">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if 'comparacion-generos' in request.path %}active{% endif %}" 
+                               href="{% url 'comparacion_generos' %}">
+                                <i class="bi bi-people"></i>
+                                Comparación de las Compras entre Géneros
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if 'categoria-monto' in request.path %}active{% endif %}" 
+                               href="{% url 'categoria_monto' %}">
+                                <i class="bi bi-tags"></i>
+                                Relación entre Categoría de Artículo y Monto de Compra
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if 'ventas-categoria' in request.path %}active{% endif %}" 
+                               href="{% url 'ventas_categoria' %}">
+                                <i class="bi bi-cart-check"></i>
+                                Cantidad de ventas por categoría
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Análisis de Ubicación -->
+            <div class="nav-section">
+                <div class="nav-section-header" onclick="toggleSection('ubicacion')">
+                    <div class="nav-section-title">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>Análisis de Ubicación</span>
+                    </div>
+                    <i class="bi bi-chevron-down text-white nav-section-icon" id="icon-ubicacion"></i>
+                </div>
+                <div class="nav-subsection" id="subsection-ubicacion">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if 'ubicacion-monto' in request.path %}active{% endif %}" 
+                               href="{% url 'ubicacion_monto' %}">
+                                <i class="bi bi-pin-map"></i>
+                                Relación entre Ubicación y Monto de Compra
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if 'presencia-geografica' in request.path %}active{% endif %}" 
+                               href="{% url 'presencia_geografica' %}">
+                                <i class="bi bi-map"></i>
+                                Presencia Geográfica Pobre en EEUU
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Análisis Multivariado -->
+            <div class="nav-section">
+                <div class="nav-section-header" onclick="toggleSection('multivariado')">
+                    <div class="nav-section-title">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                        <span>Análisis Multivariado</span>
+                    </div>
+                    <i class="bi bi-chevron-down text-white nav-section-icon" id="icon-multivariado"></i>
+                </div>
+                <div class="nav-subsection" id="subsection-multivariado">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {% if 'categoria-talla' in request.path %}active{% endif %}" 
+                               href="{% url 'categoria_talla' %}">
+                                <i class="bi bi-box-seam"></i>
+                                Cantidad de Compras según Categoría y Talla de Artículo
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Problemas (Special Section) -->
+            <div class="nav-section mt-3">
+                <a class="nav-link-special text-white {% if 'problemas' in request.path %}active{% endif %}" 
+                   href="{% url 'problemas' %}">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>Problemas</span>
+                </a>
+            </div>
         </nav>
         
         <!-- Main Content -->
@@ -157,5 +409,37 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+        function toggleSection(sectionId) {
+            const subsection = document.getElementById('subsection-' + sectionId);
+            const icon = document.getElementById('icon-' + sectionId);
+            
+            if (subsection.classList.contains('show')) {
+                subsection.classList.remove('show');
+                icon.classList.remove('rotated');
+            } else {
+                subsection.classList.add('show');
+                icon.classList.add('rotated');
+            }
+        }
+
+        // Auto-expand active sections on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const activeSections = document.querySelectorAll('.nav-subsection');
+            activeSections.forEach(subsection => {
+                const activeLink = subsection.querySelector('.nav-link.active');
+                if (activeLink) {
+                    const sectionId = subsection.id.replace('subsection-', '');
+                    subsection.classList.add('show');
+                    document.getElementById('icon-' + sectionId).classList.add('rotated');
+                }
+            });
+        });
+    </script>
+    
+    {% block extra_js %}
+    {% endblock %}
 </body>
 </html>

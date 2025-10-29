@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Problema 3: Presencia Geográfica Pobre en EEUU{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Horizontal Navigation -->
+    <div class="horizontal-nav">
+        <ul class="nav nav-tabs" id="problemasTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{% url 'problema1' %}">
+                    <i class="bi bi-1-circle me-2"></i>Problema 1: Disparidad en Ventas por Género
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{% url 'problema2' %}">
+                    <i class="bi bi-2-circle me-2"></i>Problema 2: Ventas Precarias en Categorías
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" href="{% url 'problema3' %}">
+                    <i class="bi bi-3-circle me-2"></i>Problema 3: Presencia Geográfica Pobre en EEUU
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-3-circle-fill text-info me-2"></i>Problema 3: Presencia Geográfica Pobre en EEUU</h2>
+            <p class="text-muted">Análisis de la cobertura limitada en el mercado estadounidense</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Mapa de Cobertura Actual</h5>
+                </div>
+                <div class="card-body">
+                    <div id="problema3Map" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Estados Sin Presencia</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>15 estados</strong> sin ventas registradas:</p>
+                    <ul class="small">
+                        <li>Wyoming</li>
+                        <li>Vermont</li>
+                        <li>Alaska</li>
+                        <li>North Dakota</li>
+                        <li>South Dakota</li>
+                        <li>Y otros 10 estados...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Presencia Baja</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>12 estados</strong> con ventas mínimas:</p>
+                    <ul class="small">
+                        <li>Montana</li>
+                        <li>Idaho</li>
+                        <li>Maine</li>
+                        <li>New Hampshire</li>
+                        <li>Rhode Island</li>
+                        <li>Y otros 7 estados...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Mercados Fuertes</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Top 5 estados:</strong></p>
+                    <ul class="small">
+                        <li>California - 18,500 ventas</li>
+                        <li>Texas - 14,200 ventas</li>
+                        <li>Florida - 12,800 ventas</li>
+                        <li>New York - 11,500 ventas</li>
+                        <li>Illinois - 9,200 ventas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Impacto del Problema</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li><strong>Pérdida de mercado potencial:</strong> $2.5M anuales estimados</li>
+                        <li><strong>Competidores con ventaja:</strong> Mayor presencia nacional</li>
+                        <li><strong>Limitación de crecimiento:</strong> Concentración en pocos estados</li>
+                        <li><strong>Riesgo de dependencia:</strong> Alta concentración geográfica</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Estrategia de Expansión</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Fase 1 (3 meses):</h6>
+                    <ul>
+                        <li>Establecer presencia en 5 estados prioritarios</li>
+                        <li>Desarrollar partnerships locales</li>
+                    </ul>
+                    <h6>Fase 2 (6 meses):</h6>
+                    <ul>
+                        <li>Expandir a 10 estados adicionales</li>
+                        <li>Optimizar logística regional</li>
+                    </ul>
+                    <h6>Fase 3 (12 meses):</h6>
+                    <ul>
+                        <li>Cobertura nacional completa</li>
+                        <li>Consolidación de operaciones</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Métricas de Progreso</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h3 class="text-danger">23/50</h3>
+                            <p class="text-muted">Estados con presencia</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-warning">46%</h3>
+                            <p class="text-muted">Cobertura geográfica</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-info">$2.5M</h3>
+                            <p class="text-muted">Oportunidad de mercado</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-success">12 meses</h3>
+                            <p class="text-muted">Timeline de expansión</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Map showing geographic coverage
+    const mapData = [{
+        type: 'choropleth',
+        locationmode: 'USA-states',
+        locations: ['CA', 'TX', 'FL', 'NY', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI',
+                    'NJ', 'VA', 'WA', 'AZ', 'MA', 'TN', 'IN', 'MO', 'MD', 'WI',
+                    'CO', 'MN', 'SC'],
+        z: [18500, 14200, 12800, 11500, 9200, 7800, 7200, 6900, 6500, 6200,
+            5800, 5500, 5200, 4900, 4600, 4300, 4000, 3700, 3400, 3100,
+            2800, 2500, 2200],
+        text: ['California', 'Texas', 'Florida', 'New York', 'Illinois', 
+               'Pennsylvania', 'Ohio', 'Georgia', 'North Carolina', 'Michigan',
+               'New Jersey', 'Virginia', 'Washington', 'Arizona', 'Massachusetts',
+               'Tennessee', 'Indiana', 'Missouri', 'Maryland', 'Wisconsin',
+               'Colorado', 'Minnesota', 'South Carolina'],
+        colorscale: [
+            [0, 'rgb(255, 200, 200)'],
+            [0.3, 'rgb(255, 255, 200)'],
+            [0.6, 'rgb(200, 255, 200)'],
+            [1, 'rgb(100, 200, 100)']
+        ],
+        colorbar: {
+            title: 'Ventas',
+            thickness: 20,
+            len: 0.7
+        },
+        marker: {
+            line: {
+                color: 'rgb(255,255,255)',
+                width: 2
+            }
+        }
+    }];
+
+    const mapLayout = {
+        title: 'Presencia de Ventas por Estado en EEUU',
+        geo: {
+            scope: 'usa',
+            showlakes: true,
+            lakecolor: 'rgb(255,255,255)'
+        }
+    };
+
+    Plotly.newPlot('problema3Map', mapData, mapLayout);
+</script>
+{% endblock %}

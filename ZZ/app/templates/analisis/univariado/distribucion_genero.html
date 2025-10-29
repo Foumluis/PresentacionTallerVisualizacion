@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Distribución de Clientes por Género{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-gender-ambiguous me-2"></i>Distribución de Clientes por Género</h2>
+            <p class="text-muted">Análisis univariado de la distribución de clientes según su género</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Gráfico de Distribución</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Estadísticas</h5>
+                </div>
+                <div class="card-body">
+                    <p>Aquí puedes agregar las estadísticas relacionadas con la distribución de clientes por género.</p>
+                    <!-- Add your statistics here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Interpretación</h5>
+                </div>
+                <div class="card-body">
+                    <p>Incluye aquí la interpretación de los datos y los insights obtenidos del análisis.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Example chart - replace with your actual data
+    const ctx = document.getElementById('genderChart').getContext('2d');
+    const genderChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Masculino', 'Femenino', 'Otro'],
+            datasets: [{
+                label: 'Distribución por Género',
+                data: [45, 50, 5],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(255, 206, 86, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Distribución de Clientes por Género'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

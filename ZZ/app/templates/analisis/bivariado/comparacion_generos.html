@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Comparación de las Compras entre Géneros{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-people me-2"></i>Comparación de las Compras entre Géneros</h2>
+            <p class="text-muted">Análisis comparativo de los patrones de compra entre diferentes géneros</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Gráfico Comparativo</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Métricas Clave</h5>
+                </div>
+                <div class="card-body">
+                    <p>Agrega métricas clave de comparación entre géneros.</p>
+                    <!-- Add your metrics here -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Conclusiones</h5>
+                </div>
+                <div class="card-body">
+                    <p>Resumen de las principales diferencias observadas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('comparisonChart').getContext('2d');
+    const comparisonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
+            datasets: [{
+                label: 'Masculino',
+                data: [65, 59, 80, 81, 56, 55],
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }, {
+                label: 'Femenino',
+                data: [45, 79, 60, 71, 86, 75],
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Compras por Género a lo Largo del Tiempo'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

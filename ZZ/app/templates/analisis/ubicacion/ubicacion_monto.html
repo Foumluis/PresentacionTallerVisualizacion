@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Relación entre Ubicación y Monto de Compra{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-pin-map me-2"></i>Relación entre Ubicación y Monto de Compra</h2>
+            <p class="text-muted">Análisis de cómo la ubicación geográfica influye en los montos de compra</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Mapa de Montos por Ubicación</h5>
+                </div>
+                <div class="card-body">
+                    <div id="ubicacionMap" style="height: 500px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Monto Promedio por Estado</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="ubicacionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Chart
+    const ctx = document.getElementById('ubicacionChart').getContext('2d');
+    const ubicacionChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['California', 'Texas', 'Florida', 'New York', 'Illinois'],
+            datasets: [{
+                label: 'Monto Promedio ($)',
+                data: [320, 285, 310, 295, 270],
+                backgroundColor: 'rgba(153, 102, 255, 0.8)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Placeholder for map - replace with actual Plotly map
+    const mapData = [{
+        type: 'choropleth',
+        locationmode: 'USA-states',
+        locations: ['CA', 'TX', 'FL', 'NY', 'IL'],
+        z: [320, 285, 310, 295, 270],
+        text: ['California', 'Texas', 'Florida', 'New York', 'Illinois'],
+        colorscale: 'Viridis',
+        colorbar: {
+            title: 'Monto ($)'
+        }
+    }];
+
+    const mapLayout = {
+        title: 'Monto Promedio de Compra por Estado',
+        geo: {
+            scope: 'usa'
+        }
+    };
+
+    Plotly.newPlot('ubicacionMap', mapData, mapLayout);
+</script>
+{% endblock %}
