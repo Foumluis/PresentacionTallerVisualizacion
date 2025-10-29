@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Relación entre Categoría de Artículo y Monto de Compra{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-tags me-2"></i>Relación entre Categoría de Artículo y Monto de Compra</h2>
+            <p class="text-muted">Análisis de cómo las diferentes categorías se relacionan con los montos de compra</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Monto Promedio por Categoría</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="categoriaMontoChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Análisis Detallado</h5>
+                </div>
+                <div class="card-body">
+                    <p>Insights sobre la relación entre categorías y montos de compra.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('categoriaMontoChart').getContext('2d');
+    const categoriaMontoChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Electrónicos', 'Ropa', 'Hogar', 'Deportes', 'Libros'],
+            datasets: [{
+                label: 'Monto Promedio ($)',
+                data: [450, 120, 280, 190, 45],
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Monto ($)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Monto Promedio de Compra por Categoría'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Cantidad de Ventas por Categoría{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-cart-check me-2"></i>Cantidad de Ventas por Categoría</h2>
+            <p class="text-muted">Análisis del volumen de ventas en cada categoría de productos</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Distribución de Ventas</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="ventasCategoriaChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Categorías</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Ropa
+                            <span class="badge bg-primary rounded-pill">1,234</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Electrónicos
+                            <span class="badge bg-primary rounded-pill">987</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Hogar
+                            <span class="badge bg-primary rounded-pill">654</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('ventasCategoriaChart').getContext('2d');
+    const ventasCategoriaChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Ropa', 'Electrónicos', 'Hogar', 'Deportes', 'Libros', 'Otros'],
+            datasets: [{
+                label: 'Cantidad de Ventas',
+                data: [1234, 987, 654, 432, 321, 210],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)',
+                    'rgba(255, 159, 64, 0.8)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                },
+                title: {
+                    display: true,
+                    text: 'Distribución de Ventas por Categoría'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

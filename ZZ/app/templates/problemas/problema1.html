@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Problema 1: Disparidad en Ventas por Género{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Horizontal Navigation -->
+    <div class="horizontal-nav">
+        <ul class="nav nav-tabs" id="problemasTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" href="{% url 'problema1' %}">
+                    <i class="bi bi-1-circle me-2"></i>Problema 1: Disparidad en Ventas por Género
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{% url 'problema2' %}">
+                    <i class="bi bi-2-circle me-2"></i>Problema 2: Ventas Precarias en Categorías
+                </a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" href="{% url 'problema3' %}">
+                    <i class="bi bi-3-circle me-2"></i>Problema 3: Presencia Geográfica Pobre en EEUU
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-1-circle-fill text-danger me-2"></i>Problema 1: Disparidad en Ventas por Género</h2>
+            <p class="text-muted">Análisis detallado de las diferencias significativas en ventas entre géneros</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Descripción del Problema</h5>
+                </div>
+                <div class="card-body">
+                    <p>Se ha identificado una disparidad significativa en los patrones de compra entre diferentes géneros. Esta diferencia afecta tanto al volumen de ventas como al valor promedio de las transacciones.</p>
+                    <canvas id="problema1Chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Impacto</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Pérdida de ingresos potenciales</li>
+                        <li>Desequilibrio en el inventario</li>
+                        <li>Oportunidades de mercado desaprovechadas</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card mt-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Soluciones Propuestas</h5>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>Segmentación de marketing por género</li>
+                        <li>Desarrollo de productos específicos</li>
+                        <li>Campañas dirigidas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Métricas Clave</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h3 class="text-primary">35%</h3>
+                            <p class="text-muted">Diferencia en volumen de ventas</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-danger">$125</h3>
+                            <p class="text-muted">Diferencia en ticket promedio</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-warning">22%</h3>
+                            <p class="text-muted">Tasa de conversión más baja</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-success">$450K</h3>
+                            <p class="text-muted">Oportunidad de ingresos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('problema1Chart').getContext('2d');
+    const problema1Chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+            datasets: [{
+                label: 'Masculino',
+                data: [45000, 52000, 48000, 55000],
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            }, {
+                label: 'Femenino',
+                data: [68000, 75000, 71000, 79000],
+                backgroundColor: 'rgba(255, 99, 132, 0.8)',
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Ventas ($)'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Comparación de Ventas por Género (Trimestral)'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
