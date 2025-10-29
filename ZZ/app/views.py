@@ -1,7 +1,6 @@
 from django.shortcuts import render
 
 # Create your views here.
-<<<<<<< HEAD
 
 # Análisis Univariado
 def distribucion_clientes_genero(request):
@@ -44,7 +43,7 @@ def problema3(request):
 # Alcance
 def alcance(request):
     return render(request, 'alcance.html')
-=======
+
 def home(request):
     return render(request, 'home.html')
->>>>>>> origin/main
+
