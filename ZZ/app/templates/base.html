@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Dashboard de Análisis{% endblock %}</title>
+    <title>{% block title %}Z&Z - Dashboard de Análisis{% endblock %}</title>
     <!-- Bootstrap CSS and Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -21,6 +21,11 @@
         body {
             min-height: 100vh;
             background-color: #f8f9fa;
+            scroll-behavior: smooth;
+        }
+
+        * {
+            scroll-behavior: smooth;
         }
 
         /* Top Bar */
@@ -94,16 +99,34 @@
             padding: 12px 20px;
             margin: 8px 16px;
             border-radius: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
             background-color: rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-section-header::after {
+            content: '';
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-section-header:hover::after {
+            left: 100%;
         }
 
         .nav-section-header:hover {
             background-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(3px);
         }
 
         .nav-section-header.active {
@@ -129,11 +152,13 @@
         .nav-subsection {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 0;
         }
 
         .nav-subsection.show {
             max-height: 500px;
+            opacity: 1;
         }
 
         .nav-item {
@@ -143,21 +168,44 @@
         .nav-link {
             padding: 10px 20px;
             border-radius: 8px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             gap: 10px;
             font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: white;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover::before {
+            transform: scaleY(1);
         }
 
         .nav-link:hover {
             background-color: rgba(255, 255, 255, 0.1);
             transform: translateX(5px);
+            padding-left: 25px;
         }
 
         .nav-link.active {
             background-color: rgba(255, 255, 255, 0.25);
             font-weight: 500;
+        }
+
+        .nav-link.active::before {
+            transform: scaleY(1);
         }
 
         .nav-link-special {
@@ -187,6 +235,33 @@
             margin-top: var(--topbar-height);
             padding: 30px;
             transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Page Transition Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Smooth page transitions */
+        .page-transition {
+            animation: fadeInUp 0.6s ease-out;
         }
 
         /* Horizontal Navbar for Problemas */
@@ -207,18 +282,41 @@
             color: #6c757d;
             padding: 12px 20px;
             font-weight: 500;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .horizontal-nav .nav-tabs .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #1e3c72;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
         }
 
         .horizontal-nav .nav-tabs .nav-link:hover {
             color: #1e3c72;
-            border-bottom: 2px solid #1e3c72;
+            background-color: rgba(30, 60, 114, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .horizontal-nav .nav-tabs .nav-link:hover::after {
+            width: 100%;
         }
 
         .horizontal-nav .nav-tabs .nav-link.active {
             color: #1e3c72;
-            background-color: transparent;
-            border-bottom: 2px solid #1e3c72;
+            background-color: rgba(30, 60, 114, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .horizontal-nav .nav-tabs .nav-link.active::after {
+            width: 100%;
         }
 
         /* Cards */
@@ -226,14 +324,34 @@
             border: none;
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             background: white;
             margin-bottom: 20px;
+            animation: cardSlideIn 0.5s ease-out backwards;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
         }
+
+        @keyframes cardSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stagger card animations */
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
 
         .card-header {
             background-color: white;
@@ -275,10 +393,20 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h3 class="text-white mb-0">
-                    <i class="bi bi-graph-up-arrow"></i>
-                    Dashboard
+                    <i class="bi bi-shop"></i>
+                    Z&Z
                 </h3>
-                <p class="text-white-50 small mb-0">Análisis de Ventas</p>
+                <p class="text-white-50 small mb-0">Clothing the World</p>
+            </div>
+
+            <!-- Home Link -->
+            <div class="nav-section">
+                <a class="nav-link-special text-white {% if request.path == '/' %}active{% endif %}" 
+                   href="{% url 'home' %}"
+                   style="background-color: rgba(40, 167, 69, 0.2); border: 1px solid rgba(40, 167, 69, 0.3);">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Inicio</span>
+                </a>
             </div>
 
             <!-- Análisis Univariado -->

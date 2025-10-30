@@ -4,6 +4,9 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
+    # Home
+    path('', views.home, name='home'),
+    
     # Análisis Univariado
     path('univariado/distribucion-genero/', views.distribucion_clientes_genero, name='distribucion_genero'),
     
@@ -27,6 +30,5 @@ urlpatterns = [
     
     # Alcance
     path('alcance/', views.alcance, name='alcance'),
-    path('home', views.home, name='home'),
 ]
     
