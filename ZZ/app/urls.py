@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     # Home
-    path('', views.home, name='home'),
+    path('home/', views.home, name='home'),
     
     # Análisis Univariado
     path('univariado/distribucion-genero/', views.distribucion_clientes_genero, name='distribucion_genero'),
