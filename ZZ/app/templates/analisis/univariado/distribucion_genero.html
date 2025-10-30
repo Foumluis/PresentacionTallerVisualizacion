@@ -51,48 +51,56 @@
 {% endblock %}
 
 {% block extra_js %}
+
+{{ x|json_script:"x" }}
+{{ y|json_script:"y" }}
+
 <script>
-    const ctx = document.getElementById('miGrafico');//consigue el id de donde se va a colocar
+    const x = JSON.parse(document.getElementById('x').textContent);
+    const y = JSON.parse(document.getElementById('y').textContent);
     let delayed
+  // obtener el contexto 2D del canvas
+    const ctx = document.getElementById('genderChart').getContext('2d');
+
     const miGrafico = new Chart(ctx, {// grafico y el indice
-      type: 'bar',// tipo de barra
-      data: {
-        labels: ["Enero","Febrero","Marzo","Abril","Mayo","Junio"],// nombre del eje x
-        datasets: [{//datos a ocupar
-          label: 'Ventas ($)',//nombre del eje y
-          data: [1200, 1900, 3000, 2500, 3200, 2000],//datos
-          backgroundColor: 'rgba(54, 162, 235, 0.6)',//color de las barras
-          borderColor: 'rgba(54, 162, 235, 1)',//color de los bordes
-          borderWidth: 1// tamaño del borde
-        }]
-      },
-      options: {//opciones
-        animation: {
-              onComplete: () => {
-                delayed = true;
-              },
-              delay: (context) => {
-                let delay = 0;
-                if (context.type === 'data' && context.mode === 'default' && !delayed) {
-                  delay = context.dataIndex * 300 + context.datasetIndex * 100;
-                }
-                return delay;
-              },
+        type: 'bar',// tipo de barra
+        data: {
+            labels: x,// nombre del eje x
+            datasets: [{//datos a ocupar
+            label: 'Ventas ($)',//nombre del eje y
+            data: y,//datos
+            backgroundColor: ["Cyan","Pink"],//color de las barras
+            borderColor: 'rgba(54, 162, 235, 1)',//color de los bordes
+            borderWidth: 1// tamaño del borde
+            }]
         },
-        responsive: true,// si al pasar por encima se coloca algun tipo de informacion
-        plugins: {
-          legend: { display: false }// no mostrar la leyenda
-        },
-        scales: {
-          y: {
-            beginAtZero: true,// indicamos que empiece de cero
-            title: { display: true, text: 'Monto en dólares' }//titulo del eje y
-          },
-          x: {
-            title: { display: true, text: 'Meses' }//titulo del eje x
-          }
+        options: {//opciones
+            animation: {
+                onComplete: () => {
+                    delayed = true;
+                },
+                delay: (context) => {
+                    let delay = 0;
+                    if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                    delay = context.dataIndex * 300 + context.datasetIndex * 100;
+                    }
+                    return delay;
+                },
+            },
+            responsive: true,// si al pasar por encima se coloca algun tipo de informacion
+            plugins: {
+            legend: { display: false }// no mostrar la leyenda
+            },
+            scales: {
+            y: {
+                beginAtZero: true,// indicamos que empiece de cero
+                title: { display: true, text: 'Cantidad de clientes' }//titulo del eje y
+            },
+            x: {
+                title: { display: true, text: 'Sexo' }//titulo del eje x
+            }
+            }
         }
-      }
-    });
+        });
 </script>
 {% endblock %}

@@ -106,7 +106,11 @@ def relacion_categoria_monto(request):
     return render(request, 'analisis/bivariado/categoria_monto.html')
 
 def cantidad_ventas_categoria(request):
-    return render(request, 'analisis/bivariado/ventas_categoria.html')
+    y=tarea['Category'].value_counts()
+    x =  y.index.tolist()
+    y = y.values.tolist()
+
+    return render(request, 'analisis/bivariado/ventas_categoria.html', {'y': y, 'x': x})
 
 # Análisis de Ubicación
 def relacion_ubicacion_monto(request):
