@@ -12,69 +12,172 @@
     </div>
 
     <div class="row">
-        <div class="col-12">
+        <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Monto Promedio por Categoría</h5>
+                    <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Distribución por Categoría</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="categoriaMontoChart"></canvas>
+                    <div id="categoriaMontoChart" style="width: 100%; height: 520px;"></div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
+        <div class="col-lg-6">
+            <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0">Análisis Detallado</h5>
+                    <h5 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Análisis Detallado</h5>
                 </div>
                 <div class="card-body">
-                    <p>Insights sobre la relación entre categorías y montos de compra.</p>
+                    <div id="category-stats"></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-lightbulb me-2"></i>Conclusiones</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>El gráfico circular muestra la distribución del monto total de compras por categoría de producto.</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Cada segmento representa la proporción del ingreso generado por cada categoría.</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Los porcentajes indican qué categoría contribuye más a los ingresos totales.</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Esta visualización ayuda a identificar las categorías más rentables del negocio.</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Data passed from Django using json_script -->
+{{ categories|json_script:"categories-data" }}
+{{ values|json_script:"values-data" }}
+{{ percentages|json_script:"percentages-data" }}
+{{ total|json_script:"total-data" }}
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    const ctx = document.getElementById('categoriaMontoChart').getContext('2d');
-    const categoriaMontoChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Electrónicos', 'Ropa', 'Hogar', 'Deportes', 'Libros'],
-            datasets: [{
-                label: 'Monto Promedio ($)',
-                data: [450, 120, 280, 190, 45],
-                backgroundColor: 'rgba(75, 192, 192, 0.8)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Monto ($)'
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Monto Promedio de Compra por Categoría'
-                }
+    // Get data using Django's json_script - simpler!
+    const categories = JSON.parse(document.getElementById('categories-data').textContent);
+    const values = JSON.parse(document.getElementById('values-data').textContent);
+    const percentages = JSON.parse(document.getElementById('percentages-data').textContent);
+    const total = JSON.parse(document.getElementById('total-data').textContent);
+    
+    // Define colors matching your image style
+    const colors = {
+        'Accesorios': 'rgba(135, 170, 210, 0.9)',
+        'Calzado': 'rgba(230, 140, 140, 0.9)',
+        'Outerwear': 'rgba(240, 190, 130, 0.9)',
+        'Ropa': 'rgba(140, 220, 140, 0.9)'
+    };
+    
+    // Create color array based on categories
+    const categoryColors = categories.map(cat => colors[cat] || 'rgba(150, 150, 150, 0.9)');
+    
+    // Format numbers with commas
+    function formatNumber(num) {
+        return num.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+    
+    // Create pie chart data
+    const data = [{
+        values: values,
+        labels: categories,
+        type: 'pie',
+        textinfo: 'label+percent',
+        textposition: 'inside',
+        automargin: true,
+        marker: {
+            colors: categoryColors,
+            line: {
+                color: 'white',
+                width: 2
             }
-        }
+        },
+        hovertemplate: '<b>%{label}</b><br>' +
+                       'Monto Total: $%{value:,.2f}<br>' +
+                       'Porcentaje: %{percent}<br>' +
+                       '<extra></extra>',
+        textfont: {
+            size: 16,
+            family: 'Inter, system-ui, -apple-system, sans-serif',
+            color: 'white'
+        },
+        pull: [0.02, 0.02, 0.02, 0.02]  // Slight separation between slices
+    }];
+    
+    // Layout configuration
+    const layout = {
+        title: {
+            text: 'Monto Total por Categoría',
+            font: {
+                size: 18,
+                family: 'Inter, system-ui, -apple-system, sans-serif',
+                color: '#333'
+            },
+            x: 0.5,
+            xanchor: 'center'
+        },
+        showlegend: true,
+        legend: {
+            orientation: 'h',
+            x: 0.5,
+            xanchor: 'center',
+            y: -0.1,
+            yanchor: 'top',
+            font: {
+                size: 12,
+                family: 'Inter, system-ui, -apple-system, sans-serif'
+            },
+            bgcolor: 'rgba(255, 255, 255, 0.9)',
+            bordercolor: '#E0E0E0',
+            borderwidth: 1
+        },
+        margin: {
+            l: 20,
+            r: 20,
+            t: 60,
+            b: 80
+        },
+        paper_bgcolor: 'white',
+        plot_bgcolor: 'white',
+        height: 500
+    };
+    
+    // Configuration
+    const config = {
+        responsive: true,
+        displayModeBar: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d', 'zoomIn2d', 'zoomOut2d']
+    };
+    
+    // Create the plot
+    Plotly.newPlot('categoriaMontoChart', data, layout, config);
+    
+    // Display detailed statistics
+    let statsHTML = '<div class="table-responsive"><table class="table table-sm">';
+    statsHTML += '<thead><tr><th>Categoría</th><th>Monto Total</th><th>Porcentaje</th></tr></thead><tbody>';
+    
+    categories.forEach((cat, idx) => {
+        const color = categoryColors[idx];
+        statsHTML += `<tr>
+            <td><span style="display:inline-block;width:15px;height:15px;background:${color};margin-right:8px;border:1px solid #ddd;"></span>${cat}</td>
+            <td>$${formatNumber(values[idx])}</td>
+            <td>${percentages[idx].toFixed(1)}%</td>
+        </tr>`;
+    });
+    
+    statsHTML += '</tbody></table></div>';
+    statsHTML += `<div class="mt-3"><strong>Monto Total General: $${formatNumber(total)}</strong></div>`;
+    
+    document.getElementById('category-stats').innerHTML = statsHTML;
+    
+    // Make it responsive
+    window.addEventListener('resize', function() {
+        Plotly.Plots.resize('categoriaMontoChart');
     });
 </script>
 {% endblock %}

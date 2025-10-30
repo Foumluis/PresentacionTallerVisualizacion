@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.conf import settings
 import pandas as pd
 import numpy as np
+import json
 # Create your views here.
 
 csv_path = f"{settings.BASE_DIR}/app/static/excel.csv"
@@ -100,10 +101,35 @@ def distribucion_clientes_genero(request):
 
 # Análisis Bivariado
 def comparacion_compras_generos(request):
-    return render(request, 'analisis/bivariado/comparacion_generos.html')
+    # Get purchase amounts by gender
+    male_purchases = tarea[tarea['Gender'] == 'Hombre']['Purchase Amount (USD)'].tolist()
+    female_purchases = tarea[tarea['Gender'] == 'Mujer']['Purchase Amount (USD)'].tolist()
+    
+    context = {
+        'male_purchases': male_purchases,
+        'female_purchases': female_purchases
+    }
+    return render(request, 'analisis/bivariado/comparacion_generos.html', context)
 
 def relacion_categoria_monto(request):
-    return render(request, 'analisis/bivariado/categoria_monto.html')
+    # Calculate total purchase amount by category
+    category_totals = tarea.groupby('Category')['Purchase Amount (USD)'].sum().to_dict()
+    
+    # Get category names and values
+    categories = list(category_totals.keys())
+    values = list(category_totals.values())
+    
+    # Calculate percentages
+    total = sum(values)
+    percentages = [(v/total)*100 for v in values]
+    
+    context = {
+        'categories': categories,
+        'values': values,
+        'percentages': percentages,
+        'total': total
+    }
+    return render(request, 'analisis/bivariado/categoria_monto.html', context)
 
 def cantidad_ventas_categoria(request):
     return render(request, 'analisis/bivariado/ventas_categoria.html')
@@ -117,7 +143,24 @@ def presencia_geografica(request):
 
 # Análisis Multivariado
 def compras_categoria_talla(request):
-    return render(request, 'analisis/multivariado/categoria_talla.html')
+    # Create a cross-tabulation of Category and Size
+    category_size_counts = pd.crosstab(tarea['Category'], tarea['Size'])
+    
+    # Get the data for the stacked bar chart
+    categories = category_size_counts.index.tolist()
+    sizes = category_size_counts.columns.tolist()
+    
+    # Create data for each size (stacked bars)
+    size_data = {}
+    for size in sizes:
+        size_data[size] = category_size_counts[size].tolist()
+    
+    context = {
+        'categories': categories,
+        'sizes': sizes,
+        'size_data': size_data
+    }
+    return render(request, 'analisis/multivariado/categoria_talla.html', context)
 
 # Problemas
 def problemas(request):

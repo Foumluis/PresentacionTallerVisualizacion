@@ -18,7 +18,7 @@
                     <h5 class="mb-0">Gráfico Comparativo</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="comparisonChart"></canvas>
+                    <div id="comparisonChart" style="width: 100%; height: 700px;"></div>
                 </div>
             </div>
         </div>
@@ -31,8 +31,23 @@
                     <h5 class="mb-0">Métricas Clave</h5>
                 </div>
                 <div class="card-body">
-                    <p>Agrega métricas clave de comparación entre géneros.</p>
-                    <!-- Add your metrics here -->
+                    <div class="metrics-container">
+                        <div class="metric-item mb-3">
+                            <h6 class="text-primary">Hombres</h6>
+                            <p class="mb-1"><strong>Promedio:</strong> $<span id="male-mean">-</span></p>
+                            <p class="mb-1"><strong>Mediana:</strong> $<span id="male-median">-</span></p>
+                            <p class="mb-1"><strong>Desv. Estándar:</strong> $<span id="male-std">-</span></p>
+                            <p class="mb-1"><strong>Total de compras:</strong> <span id="male-count">-</span></p>
+                        </div>
+                        <hr>
+                        <div class="metric-item">
+                            <h6 class="text-danger">Mujeres</h6>
+                            <p class="mb-1"><strong>Promedio:</strong> $<span id="female-mean">-</span></p>
+                            <p class="mb-1"><strong>Mediana:</strong> $<span id="female-median">-</span></p>
+                            <p class="mb-1"><strong>Desv. Estándar:</strong> $<span id="female-std">-</span></p>
+                            <p class="mb-1"><strong>Total de compras:</strong> <span id="female-count">-</span></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -42,52 +57,138 @@
                     <h5 class="mb-0">Conclusiones</h5>
                 </div>
                 <div class="card-body">
-                    <p>Resumen de las principales diferencias observadas.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>El diagrama de caja muestra la distribución de los montos de compra por género.</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Los valores atípicos (outliers) se destacan para identificar compras inusuales.</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>La línea central representa la mediana de cada grupo.</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Puedes comparar la variabilidad y el rango intercuartílico entre géneros.</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Data passed from Django using json_script -->
+{{ male_purchases|json_script:"male-data" }}
+{{ female_purchases|json_script:"female-data" }}
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    const ctx = document.getElementById('comparisonChart').getContext('2d');
-    const comparisonChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
-            datasets: [{
-                label: 'Masculino',
-                data: [65, 59, 80, 81, 56, 55],
-                backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }, {
-                label: 'Femenino',
-                data: [45, 79, 60, 71, 86, 75],
-                backgroundColor: 'rgba(255, 99, 132, 0.8)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Compras por Género a lo Largo del Tiempo'
-                }
+    // Get data using Django's json_script - simpler!
+    const malePurchases = JSON.parse(document.getElementById('male-data').textContent);
+    const femalePurchases = JSON.parse(document.getElementById('female-data').textContent);
+    
+    // Helper functions for statistics
+    function calculateMean(arr) {
+        return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
+    }
+    
+    function calculateMedian(arr) {
+        const sorted = [...arr].sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 !== 0 ? sorted[mid].toFixed(2) : ((sorted[mid - 1] + sorted[mid]) / 2).toFixed(2);
+    }
+    
+    function calculateStd(arr) {
+        const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
+        const variance = arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / arr.length;
+        return Math.sqrt(variance).toFixed(2);
+    }
+    
+    // Calculate and display statistics
+    document.getElementById('male-mean').textContent = calculateMean(malePurchases);
+    document.getElementById('male-median').textContent = calculateMedian(malePurchases);
+    document.getElementById('male-std').textContent = calculateStd(malePurchases);
+    document.getElementById('male-count').textContent = malePurchases.length.toLocaleString();
+    
+    document.getElementById('female-mean').textContent = calculateMean(femalePurchases);
+    document.getElementById('female-median').textContent = calculateMedian(femalePurchases);
+    document.getElementById('female-std').textContent = calculateStd(femalePurchases);
+    document.getElementById('female-count').textContent = femalePurchases.length.toLocaleString();
+    
+    // Create box plot traces
+    const traceMale = {
+        y: malePurchases,
+        type: 'box',
+        name: 'Hombre',
+        marker: {
+            color: 'rgba(54, 162, 235, 0.7)',
+            outliercolor: 'rgba(54, 162, 235, 1)',
+            line: {
+                outliercolor: 'rgba(54, 162, 235, 1)',
+                outlierwidth: 2
             }
+        },
+        boxmean: 'sd' // Show mean and standard deviation
+    };
+    
+    const traceFemale = {
+        y: femalePurchases,
+        type: 'box',
+        name: 'Mujer',
+        marker: {
+            color: 'pink',
+            outliercolor: 'rgba(255, 99, 132, 1)',
+            line: {
+                outliercolor: 'rgba(255, 99, 132, 1)',
+                outlierwidth: 2
+            }
+        },
+        boxmean: 'sd'
+    };
+    
+    const data = [traceMale, traceFemale];
+    
+    // Layout configuration
+    const layout = {
+        title: {
+            text: 'Comparación de Montos de Compra por Género',
+            font: {
+                size: 20,
+                family: 'Inter, system-ui, -apple-system, sans-serif'
+            }
+        },
+        yaxis: {
+            title: 'Monto de Compra (USD)',
+            zeroline: false,
+            gridcolor: 'rgba(128, 128, 128, 0.2)'
+        },
+        xaxis: {
+            title: 'Género'
+        },
+        plot_bgcolor: 'rgba(250, 250, 250, 0.9)',
+        paper_bgcolor: 'white',
+        showlegend: true,
+        legend: {
+            x: 1,
+            xanchor: 'right',
+            y: 1
+        },
+        margin: {
+            l: 60,
+            r: 40,
+            t: 80,
+            b: 60
         }
+    };
+    
+    // Configuration
+    const config = {
+        responsive: true,
+        displayModeBar: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d']
+    };
+    
+    // Create the plot
+    Plotly.newPlot('comparisonChart', data, layout, config);
+    
+    // Make it responsive
+    window.addEventListener('resize', function() {
+        Plotly.Plots.resize('comparisonChart');
     });
 </script>
 {% endblock %}
