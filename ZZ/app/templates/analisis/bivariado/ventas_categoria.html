@@ -3,6 +3,8 @@
 {% block title %}Cantidad de Ventas por Categoría{% endblock %}
 
 {% block content %}
+
+
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
@@ -31,15 +33,19 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             Ropa
-                            <span class="badge bg-primary rounded-pill">1,234</span>
+                            <span class="badge bg-primary rounded-pill">{{ y.0 }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Electrónicos
-                            <span class="badge bg-primary rounded-pill">987</span>
+                            Accesorios
+                            <span class="badge bg-primary rounded-pill">{{ y.1 }}</span>
                         </li>
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Hogar
-                            <span class="badge bg-primary rounded-pill">654</span>
+                            Calzado
+                            <span class="badge bg-primary rounded-pill">{{ y.2 }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Outerwear
+                            <span class="badge bg-primary rounded-pill">{{ y.3 }}</span>
                         </li>
                     </ul>
                 </div>
@@ -50,38 +56,58 @@
 {% endblock %}
 
 {% block extra_js %}
+{{ y|json_script:"y" }}
+{{ x|json_script:"x" }}
+
 <script>
+
+    const y = JSON.parse(document.getElementById('y').textContent);
+    const x = JSON.parse(document.getElementById('x').textContent);
+
+
+            // obtener el contexto 2D del canvas
     const ctx = document.getElementById('ventasCategoriaChart').getContext('2d');
-    const ventasCategoriaChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Ropa', 'Electrónicos', 'Hogar', 'Deportes', 'Libros', 'Otros'],
-            datasets: [{
-                label: 'Cantidad de Ventas',
-                data: [1234, 987, 654, 432, 321, 210],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(75, 192, 192, 0.8)',
-                    'rgba(153, 102, 255, 0.8)',
-                    'rgba(255, 159, 64, 0.8)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-                title: {
-                    display: true,
-                    text: 'Distribución de Ventas por Categoría'
+    let delayed
+
+    const miGrafico = new Chart(ctx, {// grafico y el indice
+      type: 'bar',// tipo de barra
+      data: {
+        labels:x,// nombre del eje x
+        datasets: [{//datos a ocupar
+          label: 'Ventas ($)',//nombre del eje y
+          data: y,//datos
+          backgroundColor: ["#7EEC7E", "#7fa7c4", "#f48787", "#fdce87"],//color de las barras
+          borderColor: 'rgba(54, 162, 235, 1)',//color de los bordes
+          borderWidth: 1// tamaño del borde
+        }]
+      },
+      options: {//opciones
+        animation: {
+              onComplete: () => {
+                delayed = true;
+              },
+              delay: (context) => {
+                let delay = 0;
+                if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                  delay = context.dataIndex * 300 + context.datasetIndex * 100;
                 }
-            }
+                return delay;
+              },
+        },
+        responsive: true,// si al pasar por encima se coloca algun tipo de informacion
+        plugins: {
+          legend: { display: false }// no mostrar la leyenda
+        },
+        scales: {
+          y: {
+            beginAtZero: true,// indicamos que empiece de cero
+            title: { display: true, text: 'Monto en dólares' }//titulo del eje y
+          },
+          x: {
+            title: { display: true, text: 'Meses' }//titulo del eje x
+          }
         }
+      }
     });
 </script>
 {% endblock %}
