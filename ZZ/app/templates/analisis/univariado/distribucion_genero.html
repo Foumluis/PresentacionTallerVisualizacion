@@ -52,40 +52,47 @@
 
 {% block extra_js %}
 <script>
-    // Example chart - replace with your actual data
-    const ctx = document.getElementById('genderChart').getContext('2d');
-    const genderChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Masculino', 'Femenino', 'Otro'],
-            datasets: [{
-                label: 'Distribución por Género',
-                data: [45, 50, 5],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.8)',
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(255, 206, 86, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(255, 206, 86, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'Distribución de Clientes por Género'
+    const ctx = document.getElementById('miGrafico');//consigue el id de donde se va a colocar
+    let delayed
+    const miGrafico = new Chart(ctx, {// grafico y el indice
+      type: 'bar',// tipo de barra
+      data: {
+        labels: ["Enero","Febrero","Marzo","Abril","Mayo","Junio"],// nombre del eje x
+        datasets: [{//datos a ocupar
+          label: 'Ventas ($)',//nombre del eje y
+          data: [1200, 1900, 3000, 2500, 3200, 2000],//datos
+          backgroundColor: 'rgba(54, 162, 235, 0.6)',//color de las barras
+          borderColor: 'rgba(54, 162, 235, 1)',//color de los bordes
+          borderWidth: 1// tamaño del borde
+        }]
+      },
+      options: {//opciones
+        animation: {
+              onComplete: () => {
+                delayed = true;
+              },
+              delay: (context) => {
+                let delay = 0;
+                if (context.type === 'data' && context.mode === 'default' && !delayed) {
+                  delay = context.dataIndex * 300 + context.datasetIndex * 100;
                 }
-            }
+                return delay;
+              },
+        },
+        responsive: true,// si al pasar por encima se coloca algun tipo de informacion
+        plugins: {
+          legend: { display: false }// no mostrar la leyenda
+        },
+        scales: {
+          y: {
+            beginAtZero: true,// indicamos que empiece de cero
+            title: { display: true, text: 'Monto en dólares' }//titulo del eje y
+          },
+          x: {
+            title: { display: true, text: 'Meses' }//titulo del eje x
+          }
         }
+      }
     });
 </script>
 {% endblock %}
