@@ -34,23 +34,19 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Estado</th>
                                 <th>Cantidad de Ventas</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for item in bottom_10_data %}
                             <tr>
-                                <td>Wyoming</td>
-                                <td>12</td>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ item.estado }}</td>
+                                <td>{{ item.cantidad }}</td>
                             </tr>
-                            <tr>
-                                <td>Vermont</td>
-                                <td>15</td>
-                            </tr>
-                            <tr>
-                                <td>Alaska</td>
-                                <td>18</td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
@@ -76,31 +72,92 @@
 
 {% block extra_js %}
 <script>
-    // Placeholder for map showing geographic presence
+    // Datos desde Django
+    const todosEstados = {{ todos_estados|safe }};
+    const todosCodigos = {{ todos_codigos|safe }};
+    const todasCantidades = {{ todas_cantidades|safe }};
+
+    // Debug - ver qué datos estamos recibiendo
+    console.log('Estados:', todosEstados.length);
+    console.log('Códigos:', todosCodigos.length);
+    console.log('Cantidades:', todasCantidades.length);
+    console.log('Primeros 5 estados:', todosEstados.slice(0, 5));
+    console.log('Primeros 5 códigos:', todosCodigos.slice(0, 5));
+    console.log('Primeros 5 cantidades:', todasCantidades.slice(0, 5));
+
+    // Crear el mapa de calor con Plotly usando DATOS REALES
     const mapData = [{
         type: 'choropleth',
         locationmode: 'USA-states',
-        locations: ['WY', 'VT', 'AK', 'ND', 'SD', 'MT', 'CA', 'TX', 'FL', 'NY'],
-        z: [12, 15, 18, 25, 28, 30, 1200, 1100, 980, 1050],
-        text: ['Wyoming', 'Vermont', 'Alaska', 'North Dakota', 'South Dakota', 'Montana', 
-               'California', 'Texas', 'Florida', 'New York'],
+        locations: todosCodigos,
+        z: todasCantidades,
+        text: todosEstados.map((estado, i) => `${estado}<br>Ventas: ${todasCantidades[i]}`),
+        hoverinfo: 'text',
         colorscale: [
-            [0, 'rgb(255, 200, 200)'],
-            [0.5, 'rgb(255, 255, 200)'],
-            [1, 'rgb(200, 255, 200)']
+            [0, 'rgb(255, 100, 100)'],      // Rojo oscuro (baja presencia)
+            [0.2, 'rgb(255, 150, 100)'],    // Rojo-naranja
+            [0.4, 'rgb(255, 200, 100)'],    // Naranja
+            [0.6, 'rgb(255, 255, 150)'],    // Amarillo
+            [0.8, 'rgb(150, 255, 150)'],    // Verde claro
+            [1, 'rgb(50, 200, 50)']         // Verde oscuro (alta presencia)
         ],
+        reversescale: false,
         colorbar: {
-            title: 'Ventas'
+            title: {
+                text: 'Cantidad de<br>Ventas',
+                side: 'right'
+            },
+            thickness: 20,
+            len: 0.7,
+            tickformat: 'd'
+        },
+        marker: {
+            line: {
+                color: 'rgb(255, 255, 255)',
+                width: 2
+            }
         }
     }];
 
     const mapLayout = {
-        title: 'Presencia de Ventas por Estado',
+        title: {
+            text: 'Presencia de Ventas por Estado en EE.UU.',
+            font: {
+                size: 20,
+                color: '#1e3c72',
+                family: 'Arial, sans-serif'
+            }
+        },
         geo: {
-            scope: 'usa'
+            scope: 'usa',
+            projection: {
+                type: 'albers usa'
+            },
+            showlakes: true,
+            lakecolor: 'rgb(255, 255, 255)'
+        },
+        height: 500,
+        margin: {
+            l: 0,
+            r: 0,
+            t: 50,
+            b: 0
         }
     };
 
-    Plotly.newPlot('presenciaMap', mapData, mapLayout);
+    const config = {
+        responsive: true,
+        displayModeBar: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d']
+    };
+
+    // Intentar crear el mapa con manejo de errores
+    try {
+        Plotly.newPlot('presenciaMap', mapData, mapLayout, config);
+        console.log('Mapa creado exitosamente');
+    } catch (error) {
+        console.error('Error al crear el mapa:', error);
+    }
 </script>
 {% endblock %}

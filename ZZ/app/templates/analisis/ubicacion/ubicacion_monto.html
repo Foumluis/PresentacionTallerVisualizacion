@@ -41,50 +41,169 @@
 
 {% block extra_js %}
 <script>
-    // Chart
-    const ctx = document.getElementById('ubicacionChart').getContext('2d');
-    const ubicacionChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['California', 'Texas', 'Florida', 'New York', 'Illinois'],
-            datasets: [{
-                label: 'Monto Promedio ($)',
-                data: [320, 285, 310, 295, 270],
-                backgroundColor: 'rgba(153, 102, 255, 0.8)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
+    // Datos desde Django
+    const estados = {{ estados|safe }};
+    const codigos = {{ codigos|safe }};
+    const totales = {{ totales|safe }};
+    const top10Estados = {{ top_10_estados|safe }};
+    const top10Totales = {{ top_10_totales|safe }};
 
-    // Placeholder for map - replace with actual Plotly map
+    // Crear el mapa de calor con Plotly usando DATOS REALES
     const mapData = [{
         type: 'choropleth',
         locationmode: 'USA-states',
-        locations: ['CA', 'TX', 'FL', 'NY', 'IL'],
-        z: [320, 285, 310, 295, 270],
-        text: ['California', 'Texas', 'Florida', 'New York', 'Illinois'],
-        colorscale: 'Viridis',
+        locations: codigos,
+        z: totales,
+        text: estados.map((estado, i) => `${estado}<br>Total: $${totales[i].toLocaleString()}`),
+        hoverinfo: 'text',
+        colorscale: [
+            [0, 'rgb(255, 247, 236)'],      // Amarillo muy claro
+            [0.2, 'rgb(254, 232, 200)'],    // Amarillo claro
+            [0.4, 'rgb(253, 187, 132)'],    // Naranja claro
+            [0.6, 'rgb(252, 141, 89)'],     // Naranja
+            [0.8, 'rgb(227, 74, 51)'],      // Rojo-naranja
+            [1, 'rgb(179, 0, 0)']           // Rojo oscuro
+        ],
         colorbar: {
-            title: 'Monto ($)'
+            title: {
+                text: 'Total Ventas<br>(USD)',
+                side: 'right'
+            },
+            thickness: 20,
+            len: 0.7,
+            tickformat: '$,.0f'
+        },
+        marker: {
+            line: {
+                color: 'rgb(255, 255, 255)',
+                width: 2
+            }
         }
     }];
 
     const mapLayout = {
-        title: 'Monto Promedio de Compra por Estado',
+        title: {
+            text: 'Total de Ventas por Estado en EE.UU.',
+            font: {
+                size: 20,
+                color: '#1e3c72',
+                family: 'Arial, sans-serif'
+            }
+        },
         geo: {
-            scope: 'usa'
+            scope: 'usa',
+            projection: {
+                type: 'albers usa'
+            },
+            showlakes: true,
+            lakecolor: 'rgb(255, 255, 255)'
+        },
+        height: 500,
+        margin: {
+            l: 0,
+            r: 0,
+            t: 50,
+            b: 0
         }
     };
 
-    Plotly.newPlot('ubicacionMap', mapData, mapLayout);
+    const config = {
+        responsive: true,
+        displayModeBar: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d']
+    };
+
+    Plotly.newPlot('ubicacionMap', mapData, mapLayout, config);
+
+    // Gráfico de barras para Top 10 estados con más ventas
+    const ctx = document.getElementById('ubicacionChart').getContext('2d');
+    const ubicacionChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: top10Estados,
+            datasets: [{
+                label: 'Total de Ventas (USD)',
+                data: top10Totales,
+                backgroundColor: [
+                    'rgba(179, 0, 0, 0.8)',
+                    'rgba(227, 74, 51, 0.8)',
+                    'rgba(252, 141, 89, 0.8)',
+                    'rgba(253, 187, 132, 0.8)',
+                    'rgba(254, 232, 200, 0.8)',
+                    'rgba(255, 247, 236, 0.8)',
+                    'rgba(200, 200, 255, 0.8)',
+                    'rgba(150, 150, 255, 0.8)',
+                    'rgba(100, 100, 255, 0.8)',
+                    'rgba(50, 50, 255, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(179, 0, 0, 1)',
+                    'rgba(227, 74, 51, 1)',
+                    'rgba(252, 141, 89, 1)',
+                    'rgba(253, 187, 132, 1)',
+                    'rgba(254, 232, 200, 1)',
+                    'rgba(255, 247, 236, 1)',
+                    'rgba(200, 200, 255, 1)',
+                    'rgba(150, 150, 255, 1)',
+                    'rgba(100, 100, 255, 1)',
+                    'rgba(50, 50, 255, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Top 10 Estados con Mayor Volumen de Ventas',
+                    font: {
+                        size: 16,
+                        weight: 'bold'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Total: $' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Total de Ventas (USD)',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Estados',
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
+        }
+    });
 </script>
 {% endblock %}

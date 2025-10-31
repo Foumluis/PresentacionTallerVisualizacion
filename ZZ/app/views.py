@@ -138,12 +138,93 @@ def cantidad_ventas_categoria(request):
 
     return render(request, 'analisis/bivariado/ventas_categoria.html', {'y': y, 'x': x})
 
+# --------------Bato-----------------------------------------
+
+# Diccionario para mapear nombres de estados a códigos (para Plotly)
+STATE_CODE_MAP = {
+    'Alabama': 'AL', 'Alaska': 'AK', 'Arizona': 'AZ', 'Arkansas': 'AR',
+    'California': 'CA', 'Colorado': 'CO', 'Connecticut': 'CT', 'Delaware': 'DE',
+    'Florida': 'FL', 'Georgia': 'GA', 'Hawaii': 'HI', 'Idaho': 'ID',
+    'Illinois': 'IL', 'Indiana': 'IN', 'Iowa': 'IA', 'Kansas': 'KS',
+    'Kentucky': 'KY', 'Louisiana': 'LA', 'Maine': 'ME', 'Maryland': 'MD',
+    'Massachusetts': 'MA', 'Michigan': 'MI', 'Minnesota': 'MN', 'Mississippi': 'MS',
+    'Missouri': 'MO', 'Montana': 'MT', 'Nebraska': 'NE', 'Nevada': 'NV',
+    'New Hampshire': 'NH', 'New Jersey': 'NJ', 'New Mexico': 'NM', 'New York': 'NY',
+    'North Carolina': 'NC', 'North Dakota': 'ND', 'Ohio': 'OH', 'Oklahoma': 'OK',
+    'Oregon': 'OR', 'Pennsylvania': 'PA', 'Rhode Island': 'RI', 'South Carolina': 'SC',
+    'South Dakota': 'SD', 'Tennessee': 'TN', 'Texas': 'TX', 'Utah': 'UT',
+    'Vermont': 'VT', 'Virginia': 'VA', 'Washington': 'WA', 'West Virginia': 'WV',
+    'Wisconsin': 'WI', 'Wyoming': 'WY'
+}
+
 # Análisis de Ubicación
 def relacion_ubicacion_monto(request):
-    return render(request, 'analisis/ubicacion/ubicacion_monto.html')
+    # Agrupar por ubicación y calcular el total de ventas
+    ventas_por_estado = tarea.groupby('Location')['Purchase Amount (USD)'].sum().reset_index()
+    ventas_por_estado.columns = ['Estado', 'Total_Ventas']
+    
+    # Mapear nombres de estados a códigos
+    ventas_por_estado['Codigo'] = ventas_por_estado['Estado'].map(STATE_CODE_MAP)
+    
+    # Ordenar por total de ventas descendente
+    ventas_por_estado = ventas_por_estado.sort_values('Total_Ventas', ascending=False)
+    
+    # Preparar datos para el template
+    estados = ventas_por_estado['Estado'].tolist()
+    codigos = ventas_por_estado['Codigo'].tolist()
+    totales = [int(x) for x in ventas_por_estado['Total_Ventas'].tolist()]
+    
+    # Top 10 estados
+    top_10_estados = estados[:10]
+    top_10_totales = totales[:10]
+    
+    context = {
+        'estados': json.dumps(estados),
+        'codigos': json.dumps(codigos),
+        'totales': json.dumps(totales),
+        'top_10_estados': json.dumps(top_10_estados),
+        'top_10_totales': json.dumps(top_10_totales)
+    }
+    
+    return render(request, 'analisis/ubicacion/ubicacion_monto.html', context)
 
 def presencia_geografica(request):
-    return render(request, 'analisis/ubicacion/presencia_geografica.html')
+    # Calcular cantidad de ventas por estado
+    ventas_por_estado = tarea.groupby('Location').size().reset_index(name='Cantidad_Ventas')
+    ventas_por_estado.columns = ['Estado', 'Cantidad_Ventas']
+    
+    # Mapear nombres de estados a códigos
+    ventas_por_estado['Codigo'] = ventas_por_estado['Estado'].map(STATE_CODE_MAP)
+    
+    # Crear copia ordenada para la tabla (bottom 10)
+    ventas_ordenadas = ventas_por_estado.sort_values('Cantidad_Ventas', ascending=True)
+    estados_baja_presencia = ventas_ordenadas.head(10)
+    
+    # Bottom 10 para la tabla - crear lista de diccionarios
+    bottom_10_data = [
+        {'estado': estado, 'cantidad': int(cantidad)}
+        for estado, cantidad in zip(
+            estados_baja_presencia['Estado'].tolist(),
+            estados_baja_presencia['Cantidad_Ventas'].tolist()
+        )
+    ]
+    
+    # Preparar datos para el mapa (todos los estados)
+    todos_estados = ventas_por_estado['Estado'].tolist()
+    todos_codigos = ventas_por_estado['Codigo'].tolist()
+    todas_cantidades = [int(x) for x in ventas_por_estado['Cantidad_Ventas'].tolist()]
+    
+    context = {
+        'todos_estados': json.dumps(todos_estados),
+        'todos_codigos': json.dumps(todos_codigos),
+        'todas_cantidades': json.dumps(todas_cantidades),
+        'bottom_10_data': bottom_10_data
+    }
+    
+    return render(request, 'analisis/ubicacion/presencia_geografica.html', context)
+
+# --------------Bato-----------------------------------------
+
 
 # Análisis Multivariado
 def compras_categoria_talla(request):
