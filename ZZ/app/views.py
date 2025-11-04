@@ -179,11 +179,11 @@ def relacion_ubicacion_monto(request):
     top_10_totales = totales[:10]
     
     context = {
-        'estados': json.dumps(estados),
-        'codigos': json.dumps(codigos),
-        'totales': json.dumps(totales),
-        'top_10_estados': json.dumps(top_10_estados),
-        'top_10_totales': json.dumps(top_10_totales)
+        'estados': estados,
+        'codigos': codigos,
+        'totales': totales,
+        'top_10_estados': top_10_estados,
+        'top_10_totales': top_10_totales
     }
     
     return render(request, 'analisis/ubicacion/ubicacion_monto.html', context)

@@ -37,16 +37,22 @@
         </div>
     </div>
 </div>
+{{ estados|json_script:"estados"}}
+{{ codigos|json_script:"codigos"}}
+{{ totales|json_script:"totales"}}
+{{ top_10_estados|json_script:"top_10_estados"}}
+{{ top_10_totales|json_script:"top_10_totales"}}
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
     // Datos desde Django
-    const estados = {{ estados|safe }};
-    const codigos = {{ codigos|safe }};
-    const totales = {{ totales|safe }};
-    const top10Estados = {{ top_10_estados|safe }};
-    const top10Totales = {{ top_10_totales|safe }};
+    const estados = JSON.parse(document.getElementById('estados').textContent);
+    const codigos = JSON.parse(document.getElementById('codigos').textContent);
+    const totales = JSON.parse(document.getElementById('totales').textContent);
+    const top10Estados = JSON.parse(document.getElementById('top_10_estados').textContent);
+    const top10Totales = JSON.parse(document.getElementById('top_10_totales').textContent);
 
     // Crear el mapa de calor con Plotly usando DATOS REALES
     const mapData = [{
