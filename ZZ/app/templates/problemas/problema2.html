@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container-fluid">
-    <!-- Horizontal Navigation -->
+  
     <div class="horizontal-nav">
         <ul class="nav nav-tabs" id="problemasTab" role="tablist">
             <li class="nav-item" role="presentation">
@@ -163,7 +163,7 @@
 
 {% block extra_js %}
 <script>
-    // Get all data
+
     const categories = JSON.parse(document.getElementById('categories-data').textContent);
     const sizes = JSON.parse(document.getElementById('sizes-data').textContent);
     const sizeData = JSON.parse(document.getElementById('size-data').textContent);
@@ -172,7 +172,7 @@
     const catNames = JSON.parse(document.getElementById('cat-names').textContent);
     const catValues = JSON.parse(document.getElementById('cat-values').textContent);
 
-    // 1. Stacked bar chart (multivariado)
+
     const sizeColors = {
         'S': '#D81B60',
         'M': '#E6D690',
@@ -203,7 +203,6 @@
         margin: { l: 60, r: 120, t: 60, b: 60 }
     }, {responsive: true});
 
-    // 2. Bar chart (cantidad de ventas)
     const ctx = document.getElementById('ventasChart').getContext('2d');
     new Chart(ctx, {
         type: 'bar',
@@ -224,7 +223,7 @@
         }
     });
 
-    // 3. Pie chart (monto total)
+
     const catColors = {
         'Accesorios': 'rgba(135, 170, 210, 0.9)',
         'Calzado': 'rgba(230, 140, 140, 0.9)',

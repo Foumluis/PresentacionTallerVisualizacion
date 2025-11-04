@@ -176,14 +176,14 @@
 
 {% block extra_js %}
 <script>
-    // Parse data from Django
+
     const estados = JSON.parse(document.getElementById('estados-data').textContent);
     const codigos = JSON.parse(document.getElementById('codigos-data').textContent);
     const montos = JSON.parse(document.getElementById('montos-data').textContent);
     const cantidades = JSON.parse(document.getElementById('cantidades-data').textContent);
     const bottom10 = JSON.parse(document.getElementById('bottom10-data').textContent);
 
-    // 1. Map showing total sales amount by state (red to white gradient)
+
     Plotly.newPlot('montoMap', [{
         type: 'choropleth',
         locationmode: 'USA-states',
@@ -223,7 +223,6 @@
         margin: { t: 40, b: 0, l: 0, r: 0 }
     }, {responsive: true});
 
-    // 2. Map showing quantity of sales by state (red to green gradient)
     Plotly.newPlot('cantidadMap', [{
         type: 'choropleth',
         locationmode: 'USA-states',
@@ -263,7 +262,7 @@
         margin: { t: 40, b: 0, l: 0, r: 0 }
     }, {responsive: true});
 
-    // Fill the bottom 10 states table
+
     const tableBody = document.getElementById('bottom10Table');
     tableBody.innerHTML = '';
     

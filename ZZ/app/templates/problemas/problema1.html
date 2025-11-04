@@ -160,13 +160,13 @@
 
 {% block extra_js %}
 <script>
-    // Get data
+
     const genderLabels = JSON.parse(document.getElementById('gender-labels').textContent);
     const genderCounts = JSON.parse(document.getElementById('gender-counts').textContent);
     const malePurchases = JSON.parse(document.getElementById('male-data').textContent);
     const femalePurchases = JSON.parse(document.getElementById('female-data').textContent);
 
-    // Helper functions
+
     function calculateMean(arr) {
         return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
     }
@@ -183,7 +183,7 @@
         return Math.sqrt(variance).toFixed(2);
     }
 
-    // 1. Pie chart
+
     Plotly.newPlot('genderDistributionChart', [{
         values: genderCounts,
         labels: genderLabels,
@@ -196,7 +196,7 @@
         margin: { t: 50, b: 20, l: 20, r: 20 }
     }, {responsive: true});
 
-    // 2. Boxplot
+
     Plotly.newPlot('genderComparisonChart', [
         {
             y: malePurchases,
@@ -221,7 +221,7 @@
         plot_bgcolor: '#f8f9fa'
     }, {responsive: true});
 
-    // 3. Fill statistics table
+
     document.getElementById('male-count').innerText = malePurchases.length.toLocaleString();
     document.getElementById('female-count').innerText = femalePurchases.length.toLocaleString();
     

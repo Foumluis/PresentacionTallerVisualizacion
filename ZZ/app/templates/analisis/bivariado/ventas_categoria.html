@@ -63,48 +63,45 @@
 
     const y = JSON.parse(document.getElementById('y').textContent);
     const x = JSON.parse(document.getElementById('x').textContent);
-
-
-            // obtener el contexto 2D del canvas
+    let delayed;
     const ctx = document.getElementById('ventasCategoriaChart').getContext('2d');
-    let delayed
 
-    const miGrafico = new Chart(ctx, {// grafico y el indice
-      type: 'bar',// tipo de barra
+    const miGrafico = new Chart(ctx, {
+      type: 'bar',
       data: {
-        labels:x,// nombre del eje x
-        datasets: [{//datos a ocupar
-          label: 'Ventas ($)',//nombre del eje y
-          data: y,//datos
-          backgroundColor: ["#7EEC7E", "#7fa7c4", "#f48787", "#fdce87"],//color de las barras
-          borderColor: 'rgba(54, 162, 235, 1)',//color de los bordes
-          borderWidth: 1// tamaño del borde
+        labels: x,
+        datasets: [{
+          label: 'Ventas ($)',
+          data: y,
+          backgroundColor: ["#7EEC7E", "#7fa7c4", "#f48787", "#fdce87"],
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
         }]
       },
-      options: {//opciones
+      options: {
         animation: {
-              onComplete: () => {
-                delayed = true;
-              },
-              delay: (context) => {
-                let delay = 0;
-                if (context.type === 'data' && context.mode === 'default' && !delayed) {
-                  delay = context.dataIndex * 300 + context.datasetIndex * 100;
-                }
-                return delay;
-              },
+          onComplete: () => {
+            delayed = true;
+          },
+          delay: (context) => {
+            let delay = 0;
+            if (context.type === 'data' && context.mode === 'default' && !delayed) {
+              delay = context.dataIndex * 300 + context.datasetIndex * 100;
+            }
+            return delay;
+          },
         },
-        responsive: true,// si al pasar por encima se coloca algun tipo de informacion
+        responsive: true,
         plugins: {
-          legend: { display: false }// no mostrar la leyenda
+          legend: { display: false }
         },
         scales: {
           y: {
-            beginAtZero: true,// indicamos que empiece de cero
-            title: { display: true, text: 'Monto en dólares' }//titulo del eje y
+            beginAtZero: true,
+            title: { display: true, text: 'Cantidad de ventas' }
           },
           x: {
-            title: { display: true, text: 'Meses' }//titulo del eje x
+            title: { display: true, text: 'Categorías' }
           }
         }
       }

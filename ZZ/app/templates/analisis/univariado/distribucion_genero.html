@@ -86,27 +86,25 @@
 <script>
     const x = JSON.parse(document.getElementById('x').textContent);
     const y = JSON.parse(document.getElementById('y').textContent);
-    let delayed
-  // obtener el contexto 2D del canvas
+    let delayed;
     const ctx = document.getElementById('genderChart').getContext('2d');
 
-    
     document.getElementById('valor0').innerText = y[0].toLocaleString('en-US');
     document.getElementById('valor1').innerText = y[1].toLocaleString('en-US');
     document.getElementById('total').innerText = (y[0] + y[1]).toLocaleString('en-US');
-    const miGrafico = new Chart(ctx, {// grafico y el indice
-        type: 'bar',// tipo de barra
+    const miGrafico = new Chart(ctx, {
+        type: 'bar',
         data: {
-            labels: x,// nombre del eje x
-            datasets: [{//datos a ocupar
-            label: 'Total Clientes',//nombre del eje y
-            data: y,//datos
-            backgroundColor: ["Cyan","Pink"],//color de las barras
-            borderColor: 'rgba(54, 162, 235, 1)',//color de los bordes
-            borderWidth: 1// tamaño del borde
+            labels: x,
+            datasets: [{
+            label: 'Total Clientes',
+            data: y,
+            backgroundColor: ["Cyan","Pink"],
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
             }]
         },
-        options: {//opciones
+        options: {
             animation: {
                 onComplete: () => {
                     delayed = true;
@@ -119,18 +117,18 @@
                     return delay;
                 },
             },
-            responsive: true,// si al pasar por encima se coloca algun tipo de informacion
+            responsive: true,
             plugins: {
-            legend: { display: false }// no mostrar la leyenda
+            legend: { display: false }
             },
             scales: {
             y: {
-                beginAtZero: true,// indicamos que empiece de cero
-                title: { display: true, text: 'Cantidad de clientes' }//titulo del eje y
+                beginAtZero: true,
+                title: { display: true, text: 'Cantidad de clientes' }
             },
             x: {
-                title: { display: true, text: 'Sexo' }//titulo del eje x
-            },
+                title: { display: true, text: 'Sexo' }
+            }
             }
         }
         });

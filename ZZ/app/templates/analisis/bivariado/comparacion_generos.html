@@ -77,11 +77,9 @@
 
 {% block extra_js %}
 <script>
-    // Get data using Django's json_script - simpler!
     const malePurchases = JSON.parse(document.getElementById('male-data').textContent);
     const femalePurchases = JSON.parse(document.getElementById('female-data').textContent);
     
-    // Helper functions for statistics
     function calculateMean(arr) {
         return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
     }
@@ -98,7 +96,6 @@
         return Math.sqrt(variance).toFixed(2);
     }
     
-    // Calculate and display statistics
     document.getElementById('male-mean').textContent = calculateMean(malePurchases);
     document.getElementById('male-median').textContent = calculateMedian(malePurchases);
     document.getElementById('male-std').textContent = calculateStd(malePurchases);
@@ -109,7 +106,6 @@
     document.getElementById('female-std').textContent = calculateStd(femalePurchases);
     document.getElementById('female-count').textContent = femalePurchases.length.toLocaleString();
     
-    // Create box plot traces
     const traceMale = {
         y: malePurchases,
         type: 'box',
@@ -122,7 +118,7 @@
                 outlierwidth: 2
             }
         },
-        boxmean: 'sd' // Show mean and standard deviation
+        boxmean: 'sd'
     };
     
     const traceFemale = {
@@ -142,7 +138,6 @@
     
     const data = [traceMale, traceFemale];
     
-    // Layout configuration
     const layout = {
         title: {
             text: 'Comparación de Montos de Compra por Género',
@@ -175,7 +170,6 @@
         }
     };
     
-    // Configuration
     const config = {
         responsive: true,
         displayModeBar: true,
@@ -183,10 +177,8 @@
         modeBarButtonsToRemove: ['pan2d', 'lasso2d', 'select2d']
     };
     
-    // Create the plot
     Plotly.newPlot('comparisonChart', data, layout, config);
     
-    // Make it responsive
     window.addEventListener('resize', function() {
         Plotly.Plots.resize('comparisonChart');
     });

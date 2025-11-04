@@ -58,20 +58,20 @@
 
 {% block extra_js %}
 <script>
-    // Parse data from Django
+
     const categories = JSON.parse(document.getElementById('categories-data').textContent);
     const sizes = JSON.parse(document.getElementById('sizes-data').textContent);
     const sizeData = JSON.parse(document.getElementById('size-data').textContent);
 
-    // Define colors for each size (matching the image style)
+
     const sizeColors = {
-        'S': '#D81B60',    // Pink
-        'M': '#E6D690',    // Yellow/Beige
-        'L': '#6FB3B8',    // Light Teal
-        'XL': '#2E7D7B'    // Dark Teal
+        'S': '#D81B60',    
+        'M': '#E6D690',    
+        'L': '#6FB3B8',   
+        'XL': '#2E7D7B'    
     };
 
-    // Create traces for each size (stacked bars)
+    
     const traces = sizes.map(size => ({
         name: size,
         x: categories,
@@ -86,7 +86,7 @@
         }
     }));
 
-    // Layout configuration
+
     const layout = {
         title: {
             text: 'Cantidad de ventas por Categoría y Talla',
@@ -116,21 +116,21 @@
         paper_bgcolor: '#ffffff'
     };
 
-    // Create the chart
+
     Plotly.newPlot('stackedBarChart', traces, layout, {responsive: true});
 
-    // Generate size statistics table
+
     function generateSizeStats() {
         let statsHtml = '<div class="table-responsive"><table class="table table-sm">';
         statsHtml += '<thead><tr><th>Talla</th><th>Total Ventas</th></tr></thead><tbody>';
         
-        // Calculate total for each size across all categories
+  
         const sizeTotals = {};
         sizes.forEach(size => {
             sizeTotals[size] = sizeData[size].reduce((a, b) => a + b, 0);
         });
         
-        // Sort by total (descending)
+    
         const sortedSizes = Object.entries(sizeTotals).sort((a, b) => b[1] - a[1]);
         
         sortedSizes.forEach(([size, total]) => {

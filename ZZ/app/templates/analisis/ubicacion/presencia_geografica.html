@@ -81,15 +81,11 @@
 
 {% block extra_js %}
 <script>
-    // Datos desde Django
     const todosEstados = JSON.parse(document.getElementById('todos_estados').textContent);
     const todosCodigos = JSON.parse(document.getElementById('todos_codigos').textContent);
     const todasCantidades = JSON.parse(document.getElementById('todas_cantidades').textContent);
     const bottom10Data = JSON.parse(document.getElementById('bottom_10_data').textContent);
 
-
-
-    // Crear el mapa de calor con Plotly usando DATOS REALES
     const mapData = [{
         type: 'choropleth',
         locationmode: 'USA-states',
@@ -98,12 +94,12 @@
         text: todosEstados.map((estado, i) => `${estado}<br>Ventas: ${todasCantidades[i]}`),
         hoverinfo: 'text',
         colorscale: [
-            [0, 'rgb(255, 100, 100)'],      // Rojo oscuro (baja presencia)
-            [0.2, 'rgb(255, 150, 100)'],    // Rojo-naranja
-            [0.4, 'rgb(255, 200, 100)'],    // Naranja
-            [0.6, 'rgb(255, 255, 150)'],    // Amarillo
-            [0.8, 'rgb(150, 255, 150)'],    // Verde claro
-            [1, 'rgb(50, 200, 50)']         // Verde oscuro (alta presencia)
+            [0, 'rgb(255, 100, 100)'],
+            [0.2, 'rgb(255, 150, 100)'],
+            [0.4, 'rgb(255, 200, 100)'],
+            [0.6, 'rgb(255, 255, 150)'],
+            [0.8, 'rgb(150, 255, 150)'],
+            [1, 'rgb(50, 200, 50)']
         ],
         reversescale: false,
         colorbar: {
