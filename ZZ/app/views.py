@@ -252,13 +252,95 @@ def problemas(request):
     return render(request, 'problemas/base_problemas.html')
 
 def problema1(request):
-    return render(request, 'problemas/problema1.html')
+    # Datos univariados - distribución de género
+    x = tarea['Gender'].value_counts().index.tolist()
+    y = tarea["Gender"].value_counts().tolist()
+    
+    # Datos bivariados - comparación de compras por género
+    male_purchases = tarea[tarea['Gender'] == 'Hombre']['Purchase Amount (USD)'].tolist()
+    female_purchases = tarea[tarea['Gender'] == 'Mujer']['Purchase Amount (USD)'].tolist()
+    
+    context = {
+        'gender_labels': x,
+        'gender_counts': y,
+        'male_purchases': male_purchases,
+        'female_purchases': female_purchases
+    }
+    return render(request, 'problemas/problema1.html', context)
 
 def problema2(request):
-    return render(request, 'problemas/problema2.html')
+    # Multivariado: Category x Size
+    category_size_counts = pd.crosstab(tarea['Category'], tarea['Size'])
+    categories = category_size_counts.index.tolist()
+    sizes = category_size_counts.columns.tolist()
+    size_data = {}
+    for size in sizes:
+        size_data[size] = category_size_counts[size].tolist()
+    
+    # Bivariado 1: Cantidad de ventas por categoría
+    y = tarea['Category'].value_counts()
+    x_ventas = y.index.tolist()
+    y_ventas = y.values.tolist()
+    
+    # Bivariado 2: Monto total por categoría
+    category_totals_dict = tarea.groupby('Category')['Purchase Amount (USD)'].sum().to_dict()
+    cat_names = list(category_totals_dict.keys())
+    cat_values = list(category_totals_dict.values())
+    total_monto = sum(cat_values)
+    cat_percentages = [(v/total_monto)*100 for v in cat_values]
+    
+    context = {
+        'categories': categories,
+        'sizes': sizes,
+        'size_data': size_data,
+        'x_ventas': x_ventas,
+        'y_ventas': y_ventas,
+        'cat_names': cat_names,
+        'cat_values': cat_values,
+        'cat_percentages': cat_percentages,
+        'total_monto': total_monto
+    }
+    return render(request, 'problemas/problema2.html', context)
 
 def problema3(request):
-    return render(request, 'problemas/problema3.html')
+    # Geographic presence data
+    ventas_por_estado = tarea.groupby('Location')['Purchase Amount (USD)'].sum().reset_index()
+    ventas_por_estado.columns = ['Estado', 'Total_Ventas']
+    ventas_por_estado['Codigo'] = ventas_por_estado['Estado'].map(STATE_CODE_MAP)
+    ventas_por_estado = ventas_por_estado.sort_values('Total_Ventas', ascending=False)
+    
+    # Count of sales per state
+    cantidad_por_estado = tarea.groupby('Location').size().reset_index(name='Cantidad_Ventas')
+    cantidad_por_estado.columns = ['Estado', 'Cantidad_Ventas']
+    cantidad_por_estado['Codigo'] = cantidad_por_estado['Estado'].map(STATE_CODE_MAP)
+    cantidad_ordenada = cantidad_por_estado.sort_values('Cantidad_Ventas', ascending=True)
+    
+    # Data for choropleth maps
+    todos_estados = ventas_por_estado['Estado'].tolist()
+    todos_codigos = ventas_por_estado['Codigo'].tolist()
+    todos_montos = [int(x) for x in ventas_por_estado['Total_Ventas'].tolist()]
+    
+    todas_cantidades = []
+    for estado in todos_estados:
+        cantidad = cantidad_por_estado[cantidad_por_estado['Estado'] == estado]['Cantidad_Ventas'].values[0]
+        todas_cantidades.append(int(cantidad))
+    
+    # Bottom 10 states for low presence
+    bottom_10 = cantidad_ordenada.head(10)
+    bottom_10_data = []
+    for i in range(len(bottom_10)):
+        estado = bottom_10.iloc[i]['Estado']
+        cantidad = int(bottom_10.iloc[i]['Cantidad_Ventas'])
+        bottom_10_data.append({'estado': estado, 'cantidad': cantidad})
+    
+    context = {
+        'estados': todos_estados,
+        'codigos': todos_codigos,
+        'montos': todos_montos,
+        'cantidades': todas_cantidades,
+        'bottom_10': bottom_10_data
+    }
+    return render(request, 'problemas/problema3.html', context)
 
 # Alcance
 def alcance(request):
