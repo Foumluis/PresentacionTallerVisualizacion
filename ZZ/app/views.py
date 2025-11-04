@@ -97,6 +97,7 @@ tarea['Frequency of Purchases'] = tarea['Frequency of Purchases'].replace({
 def distribucion_clientes_genero(request):
     x = tarea['Gender'].value_counts().index.tolist()
     y = tarea["Gender"].value_counts().tolist()
+    print(x,y)
     return render(request, 'analisis/univariado/distribucion_genero.html', {'x': x, 'y': y})
 
 # Análisis Bivariado
@@ -122,7 +123,6 @@ def relacion_categoria_monto(request):
     # Calculate percentages
     total = sum(values)
     percentages = [(v/total)*100 for v in values]
-    
     context = {
         'categories': categories,
         'values': values,
