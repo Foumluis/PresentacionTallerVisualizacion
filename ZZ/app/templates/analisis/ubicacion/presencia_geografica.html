@@ -58,32 +58,36 @@
                     <h5 class="mb-0">Recomendaciones</h5>
                 </div>
                 <div class="card-body">
-                    <ul>
-                        <li>Desarrollar estrategias de marketing para estados con baja presencia</li>
-                        <li>Analizar barreras de entrada en mercados específicos</li>
-                        <li>Considerar asociaciones locales para expandir la presencia</li>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Los estados con mayores montos de venta, como Montana, Illinois y California, concentran gran parte de los ingresos totales, reflejando una alta presencia comercial en el norte y oeste del país</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Las diferencias de ventas entre estados son notables, lo que indica una distribución geográfica desigual que podría limitar el crecimiento nacional de la marca.</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Los estados con menor presencia podrían estar siendo afectados por falta de distribución, baja visibilidad publicitaria o preferencias locales distintas, factores que deben ser analizados en profundidad.</li>
+
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+{{ todos_estados|json_script:"todos_estados" }}
+{{ todos_codigos|json_script:"todos_codigos" }}
+{{ todas_cantidades|json_script:"todas_cantidades" }}
+{{ bottom_10_data|json_script:"bottom_10_data" }}
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
     // Datos desde Django
-    const todosEstados = {{ todos_estados|safe }};
-    const todosCodigos = {{ todos_codigos|safe }};
-    const todasCantidades = {{ todas_cantidades|safe }};
+    const todosEstados = JSON.parse(document.getElementById('todos_estados').textContent);
+    const todosCodigos = JSON.parse(document.getElementById('todos_codigos').textContent);
+    const todasCantidades = JSON.parse(document.getElementById('todas_cantidades').textContent);
+    const bottom10Data = JSON.parse(document.getElementById('bottom_10_data').textContent);
 
-    // Debug - ver qué datos estamos recibiendo
-    console.log('Estados:', todosEstados.length);
-    console.log('Códigos:', todosCodigos.length);
-    console.log('Cantidades:', todasCantidades.length);
-    console.log('Primeros 5 estados:', todosEstados.slice(0, 5));
-    console.log('Primeros 5 códigos:', todosCodigos.slice(0, 5));
-    console.log('Primeros 5 cantidades:', todasCantidades.slice(0, 5));
+
 
     // Crear el mapa de calor con Plotly usando DATOS REALES
     const mapData = [{

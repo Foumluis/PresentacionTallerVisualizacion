@@ -6,34 +6,43 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <h2><i class="bi bi-pin-map me-2"></i>Relación entre Ubicación y Monto de Compra</h2>
-            <p class="text-muted">Análisis de cómo la ubicación geográfica influye en los montos de compra</p>
+            <h2><i class="bi bi-map me-2"></i>Relación entre Ubicación y Monto de Compra</h2>
+            <p class="text-muted">Análisis de las zonas  con el Monto de Compra en Estados Unidos</p>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-12">
+     <div class="row">
+        <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Mapa de Montos por Ubicación</h5>
+                    <h5 class="mb-0">Total de Ventas por Estado en EE.UU.</h5>
                 </div>
                 <div class="card-body">
                     <div id="ubicacionMap" style="height: 500px;"></div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="row mt-4">
-        <div class="col-12">
+        <div class="col-lg-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Monto Promedio por Estado</h5>
+                    <h5 class="mb-0">Top 10 Estados con Mayor Volumen de Ventas</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="ubicacionChart"></canvas>
+                    <canvas id="ubicacionChart" style="width: 100%; height: 500px;"></canvas>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Conclusiones</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-unstyled">
+                <li><i class="bi bi-check-circle text-success me-2"></i>Los estados con mayores montos de venta, como Montana, Illinois y California, concentran gran parte de los ingresos totales, reflejando una alta presencia comercial en el norte y oeste del país.</li>
+                <li><i class="bi bi-check-circle text-success me-2"></i>Las diferencias de montos de ventas entre estados son notables, lo que indica una distribución geográfica desigual que podría limitar el crecimiento nacional de la marca.</li>
+                <li><i class="bi bi-check-circle text-success me-2"></i>Los estados con montos más bajos representan mercados poco explotados, ideales para estrategias de expansión, especialmente en el centro y sureste de EE.UU.</li>
+                <li><i class="bi bi-check-circle text-success me-2"></i>Se recomienda que ZYZ refuerce su presencia en los estados con ventas medias o bajas, aplicando campañas regionales y alianzas locales para equilibrar su cobertura y aumentar la participación nacional.</li>
+            </ul>
         </div>
     </div>
 </div>
@@ -88,14 +97,6 @@
     }];
 
     const mapLayout = {
-        title: {
-            text: 'Total de Ventas por Estado en EE.UU.',
-            font: {
-                size: 20,
-                color: '#1e3c72',
-                family: 'Arial, sans-serif'
-            }
-        },
         geo: {
             scope: 'usa',
             projection: {
@@ -164,14 +165,6 @@
             plugins: {
                 legend: {
                     display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Top 10 Estados con Mayor Volumen de Ventas',
-                    font: {
-                        size: 16,
-                        weight: 'bold'
-                    }
                 },
                 tooltip: {
                     callbacks: {

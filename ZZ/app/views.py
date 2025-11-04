@@ -215,9 +215,9 @@ def presencia_geografica(request):
     todas_cantidades = [int(x) for x in ventas_por_estado['Cantidad_Ventas'].tolist()]
     
     context = {
-        'todos_estados': json.dumps(todos_estados),
-        'todos_codigos': json.dumps(todos_codigos),
-        'todas_cantidades': json.dumps(todas_cantidades),
+        'todos_estados': todos_estados,
+        'todos_codigos': todos_codigos,
+        'todas_cantidades': todas_cantidades,
         'bottom_10_data': bottom_10_data
     }
     
