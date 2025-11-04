@@ -138,7 +138,7 @@ def cantidad_ventas_categoria(request):
 
     return render(request, 'analisis/bivariado/ventas_categoria.html', {'y': y, 'x': x})
 
-# --------------Bato-----------------------------------------
+
 
 # Diccionario para mapear nombres de estados a códigos (para Plotly)
 STATE_CODE_MAP = {
@@ -223,19 +223,17 @@ def presencia_geografica(request):
     
     return render(request, 'analisis/ubicacion/presencia_geografica.html', context)
 
-# --------------Bato-----------------------------------------
 
 
 # Análisis Multivariado
 def compras_categoria_talla(request):
-    # Create a cross-tabulation of Category and Size
+
     category_size_counts = pd.crosstab(tarea['Category'], tarea['Size'])
     
-    # Get the data for the stacked bar chart
+
     categories = category_size_counts.index.tolist()
     sizes = category_size_counts.columns.tolist()
-    
-    # Create data for each size (stacked bars)
+
     size_data = {}
     for size in sizes:
         size_data[size] = category_size_counts[size].tolist()
@@ -252,11 +250,11 @@ def problemas(request):
     return render(request, 'problemas/base_problemas.html')
 
 def problema1(request):
-    # Datos univariados - distribución de género
+
     x = tarea['Gender'].value_counts().index.tolist()
     y = tarea["Gender"].value_counts().tolist()
     
-    # Datos bivariados - comparación de compras por género
+
     male_purchases = tarea[tarea['Gender'] == 'Hombre']['Purchase Amount (USD)'].tolist()
     female_purchases = tarea[tarea['Gender'] == 'Mujer']['Purchase Amount (USD)'].tolist()
     
@@ -269,15 +267,14 @@ def problema1(request):
     return render(request, 'problemas/problema1.html', context)
 
 def problema2(request):
-    # Multivariado: Category x Size
+
     category_size_counts = pd.crosstab(tarea['Category'], tarea['Size'])
     categories = category_size_counts.index.tolist()
     sizes = category_size_counts.columns.tolist()
     size_data = {}
     for size in sizes:
         size_data[size] = category_size_counts[size].tolist()
-    
-    # Bivariado 1: Cantidad de ventas por categoría
+
     y = tarea['Category'].value_counts()
     x_ventas = y.index.tolist()
     y_ventas = y.values.tolist()
@@ -303,19 +300,19 @@ def problema2(request):
     return render(request, 'problemas/problema2.html', context)
 
 def problema3(request):
-    # Geographic presence data
+
     ventas_por_estado = tarea.groupby('Location')['Purchase Amount (USD)'].sum().reset_index()
     ventas_por_estado.columns = ['Estado', 'Total_Ventas']
     ventas_por_estado['Codigo'] = ventas_por_estado['Estado'].map(STATE_CODE_MAP)
     ventas_por_estado = ventas_por_estado.sort_values('Total_Ventas', ascending=False)
     
-    # Count of sales per state
+
     cantidad_por_estado = tarea.groupby('Location').size().reset_index(name='Cantidad_Ventas')
     cantidad_por_estado.columns = ['Estado', 'Cantidad_Ventas']
     cantidad_por_estado['Codigo'] = cantidad_por_estado['Estado'].map(STATE_CODE_MAP)
     cantidad_ordenada = cantidad_por_estado.sort_values('Cantidad_Ventas', ascending=True)
     
-    # Data for choropleth maps
+
     todos_estados = ventas_por_estado['Estado'].tolist()
     todos_codigos = ventas_por_estado['Codigo'].tolist()
     todos_montos = [int(x) for x in ventas_por_estado['Total_Ventas'].tolist()]
@@ -325,7 +322,7 @@ def problema3(request):
         cantidad = cantidad_por_estado[cantidad_por_estado['Estado'] == estado]['Cantidad_Ventas'].values[0]
         todas_cantidades.append(int(cantidad))
     
-    # Bottom 10 states for low presence
+
     bottom_10 = cantidad_ordenada.head(10)
     bottom_10_data = []
     for i in range(len(bottom_10)):
